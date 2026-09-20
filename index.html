@@ -6,7 +6,19 @@
 
   <title>Kiro Play 🎮</title>
 
+  <!-- Tipografía gamer -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --coral: #E35D5B;
+      --arena: #F2C6A0;
+      --hueso: #FBF6F1;
+      --carbon: #333333;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -14,157 +26,213 @@
     }
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #fff8f5;
-      color: #252525;
       min-height: 100vh;
+      background: var(--hueso);
+      color: var(--carbon);
+      font-family: "Chakra Petch", sans-serif;
+      overflow-x: hidden;
     }
 
-    .header {
-      background: #e35d5b;
-      padding: 28px 20px 34px;
+    /* FONDO DECORATIVO */
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      background: var(--arena);
+      border-radius: 50%;
+      top: -140px;
+      right: -100px;
+      opacity: 0.45;
+      z-index: -1;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      background: var(--coral);
+      border-radius: 50%;
+      bottom: -130px;
+      left: -100px;
+      opacity: 0.12;
+      z-index: -1;
+    }
+
+    /* HEADER */
+
+    header {
+      background: var(--coral);
+      color: var(--hueso);
       text-align: center;
-      border-bottom-left-radius: 28px;
-      border-bottom-right-radius: 28px;
+      padding: 38px 20px 45px;
+      border-bottom-left-radius: 35px;
+      border-bottom-right-radius: 35px;
+      box-shadow: 0 8px 0 var(--carbon);
     }
 
-    .logo {
-      font-size: 42px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      color: white;
+    .mini-title {
+      font-family: "Press Start 2P", cursive;
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      opacity: 0.95;
     }
 
-    .play {
-      display: inline-block;
-      margin-left: 5px;
-      transform: rotate(-5deg);
+    h1 {
+      font-family: "Press Start 2P", cursive;
+      font-size: clamp(26px, 7vw, 48px);
+      line-height: 1.4;
+      text-shadow: 4px 4px 0 var(--carbon);
     }
 
     .subtitle {
-      margin-top: 8px;
-      color: white;
-      font-size: 17px;
+      margin-top: 18px;
+      font-size: 20px;
       font-weight: 600;
     }
 
-    .container {
-      width: min(100% - 32px, 900px);
-      margin: 0 auto;
-      padding: 28px 0 45px;
+    /* CONTENIDO */
+
+    main {
+      width: min(1050px, 92%);
+      margin: 45px auto;
     }
 
-    .welcome {
+    .section-title {
       text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .welcome h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .welcome p {
-      color: #666;
+      font-family: "Press Start 2P", cursive;
       font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      color: var(--carbon);
     }
+
+    /* JUEGOS */
 
     .games {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
     }
 
     .game-card {
-      background: white;
-      border: 2px solid #eeeeee;
+      background: var(--hueso);
+      border: 3px solid var(--carbon);
       border-radius: 22px;
-      padding: 22px;
-      min-height: 210px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+      padding: 25px 20px 22px;
+      text-align: center;
+      box-shadow: 7px 7px 0 var(--arena);
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .game-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 9px 24px rgba(0,0,0,0.10);
+      transform: translate(-3px, -3px);
+      box-shadow: 10px 10px 0 var(--coral);
     }
 
     .game-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
+      font-size: 50px;
+      margin-bottom: 14px;
     }
 
     .game-card h2 {
-      font-size: 21px;
-      margin-bottom: 7px;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 9px;
     }
 
     .game-card p {
-      color: #777;
+      font-size: 16px;
       line-height: 1.4;
-      font-size: 14px;
+      margin-bottom: 20px;
     }
 
-    .button {
-      display: block;
+    /* BOTONES */
+
+    .play-button {
+      display: inline-block;
       width: 100%;
-      border: none;
-      border-radius: 13px;
       padding: 13px 16px;
-      margin-top: 18px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
+      border: 3px solid var(--carbon);
+      border-radius: 13px;
+      background: var(--coral);
+      color: var(--hueso);
+      font-family: "Chakra Petch", sans-serif;
+      font-size: 17px;
+      font-weight: 700;
       text-decoration: none;
-      background: #e35d5b;
-      color: white;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--carbon);
+      transition: all 0.12s ease;
     }
 
-    .button:hover {
-      filter: brightness(0.94);
+    .play-button:hover {
+      background: var(--arena);
+      color: var(--carbon);
+    }
+
+    .play-button:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--carbon);
     }
 
     .coming-soon {
-      background: #f5f5f5;
-      color: #999;
+      background: var(--arena);
+      color: var(--carbon);
       cursor: default;
+      box-shadow: 4px 4px 0 var(--carbon);
     }
 
     .coming-soon:hover {
-      filter: none;
+      background: var(--arena);
+      color: var(--carbon);
     }
 
-    .footer {
+    /* FOOTER */
+
+    footer {
       text-align: center;
-      margin-top: 35px;
-      color: #888;
-      font-size: 13px;
+      padding: 35px 20px 45px;
+      font-size: 15px;
     }
 
     .store-link {
       display: inline-block;
       margin-top: 12px;
-      color: #e35d5b;
+      color: var(--coral);
       font-weight: 700;
       text-decoration: none;
     }
 
-    @media (max-width: 500px) {
-      .logo {
-        font-size: 35px;
+    .store-link:hover {
+      text-decoration: underline;
+    }
+
+    /* CELULAR */
+
+    @media (max-width: 600px) {
+
+      header {
+        padding: 32px 18px 38px;
       }
 
-      .welcome h1 {
-        font-size: 24px;
+      .subtitle {
+        font-size: 17px;
+      }
+
+      main {
+        margin: 35px auto;
       }
 
       .games {
         grid-template-columns: 1fr;
+      }
+
+      .game-card {
+        padding: 23px 18px 20px;
       }
     }
   </style>
@@ -172,98 +240,114 @@
 
 <body>
 
-  <header class="header">
-    <div class="logo">
-      KIRO <span class="play">PLAY 🎮</span>
-    </div>
+  <header>
+    <div class="mini-title">BIENVENIDO A</div>
+
+    <h1>KIRO PLAY 🎮</h1>
 
     <div class="subtitle">
       Jugá mientras esperás 💗
     </div>
   </header>
 
-  <main class="container">
+  <main>
 
-    <section class="welcome">
-      <h1>¿A qué jugamos?</h1>
-      <p>Elegí un juego y demostrá de qué estás hecho 👀</p>
-    </section>
+    <div class="section-title">
+      ELEGÍ TU JUEGO
+    </div>
 
     <section class="games">
 
-      <article class="game-card">
-        <div>
-          <div class="game-icon">🕹️</div>
-          <h2>Misión Mostrador</h2>
-          <p>
-            Sobreviví al caos de Kiro, juntá objetos y conseguí el mayor puntaje.
-          </p>
-        </div>
+      <!-- MISIÓN MOSTRADOR -->
 
-        <button class="button" onclick="comingSoon()">
+      <article class="game-card">
+        <div class="game-icon">🕹️</div>
+
+        <h2>Misión Mostrador</h2>
+
+        <p>
+          Sobreviví al caos del mostrador.
+        </p>
+
+        <button
+          class="play-button"
+          onclick="alert('👀 ¡Este juego está llegando! Muy pronto vas a poder jugar Misión Mostrador.')"
+        >
           JUGAR
         </button>
       </article>
 
-      <article class="game-card">
-        <div>
-          <div class="game-icon">🔎</div>
-          <h2>Encontrá a Kiro</h2>
-          <p>
-            Kiro se escondió. ¿Podés encontrarlo antes de que se acabe el tiempo?
-          </p>
-        </div>
 
-        <button class="button coming-soon">
+      <!-- ENCONTRÁ A KIRO -->
+
+      <article class="game-card">
+        <div class="game-icon">🔎</div>
+
+        <h2>Encontrá a Kiro</h2>
+
+        <p>
+          ¿Podés encontrarlo?
+        </p>
+
+        <div class="play-button coming-soon">
           PRÓXIMAMENTE
-        </button>
+        </div>
       </article>
 
-      <article class="game-card">
-        <div>
-          <div class="game-icon">🏃</div>
-          <h2>Kiro Run</h2>
-          <p>
-            Corré, esquivá obstáculos y juntá todo lo que encuentres por el camino.
-          </p>
-        </div>
 
-        <button class="button coming-soon">
+      <!-- KIRO RUN -->
+
+      <article class="game-card">
+        <div class="game-icon">🏃</div>
+
+        <h2>Kiro Run</h2>
+
+        <p>
+          Corré, esquivá y conseguí puntos.
+        </p>
+
+        <div class="play-button coming-soon">
           PRÓXIMAMENTE
-        </button>
+        </div>
       </article>
 
-      <article class="game-card">
-        <div>
-          <div class="game-icon">🧠</div>
-          <h2>Trivia Kiro</h2>
-          <p>
-            ¿Cuánto sabés de Kiro? Poné a prueba tus conocimientos.
-          </p>
-        </div>
 
-        <button class="button coming-soon">
+      <!-- TRIVIA -->
+
+      <article class="game-card">
+        <div class="game-icon">🧠</div>
+
+        <h2>Trivia Kiro</h2>
+
+        <p>
+          ¿Cuánto sabés de Kiro?
+        </p>
+
+        <div class="play-button coming-soon">
           PRÓXIMAMENTE
-        </button>
+        </div>
       </article>
 
     </section>
 
-    <footer class="footer">
-      <p>Hecho con 💗 por Kiro</p>
-
-      <a class="store-link" href="https://somoskiro.com.ar">
-        ← Volver a la tienda
-      </a>
-    </footer>
-
   </main>
 
-  <script>
-    function comingSoon() {
-      alert("👀 ¡Este juego está llegando! Muy pronto vas a poder jugar Misión Mostrador.");
-    }
-  </script>
+
+  <footer>
+
+    <div>
+      Hecho con 💗 por Kiro
+    </div>
+
+    <a
+      class="store-link"
+      href="https://somoskiro.com.ar"
+      target="_blank"
+    >
+      🛍️ Volver a la tienda
+    </a>
+
+  </footer>
 
 </body>
 </html>
