@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Kiro Play — Misión Mostrador</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap');
+:root{--coral:#E35D5B;--arena:#F2C6A0;--cream:#FBF6F1;--ink:#333;--purple:#8c52ff;--green:#39a85a;--gold:#f4bd38;--wood:#a96542;--darkwood:#6f3f2c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--arena);font-family:'Chakra Petch',sans-serif;color:var(--ink)}
+body{touch-action:none;overscroll-behavior:none}
+#game{position:relative;width:100%;height:100%;overflow:hidden;background:linear-gradient(#f5c4a2 0 12%,#fff8f1 12% 79%,#d89b73 79% 100%);touch-action:none}
+/* AMBIENTACIÓN KIRO */
+#storeWall{position:absolute;left:0;right:0;top:0;height:31%;z-index:0;background:linear-gradient(180deg,#f7d3b8,#fff8f1 62%,#f3d8c6)}
+#awning{position:absolute;left:0;right:0;top:0;height:32px;display:flex;z-index:1;overflow:hidden;border-bottom:3px solid var(--ink)}
+#awning span{flex:1;background:var(--coral);border-right:2px solid rgba(51,51,51,.18);transform:skewX(-18deg) scaleX(1.15);margin:0 -3px}
+#awning span:nth-child(even){background:#fff3e9}
+#brandSign{position:absolute;left:50%;top:37px;transform:translateX(-50%);z-index:2;background:var(--cream);border:4px solid var(--ink);border-radius:16px;padding:8px 17px;box-shadow:5px 5px 0 var(--ink);font-family:'Press Start 2P';font-size:16px;color:var(--coral);white-space:nowrap}
+#shelf{position:absolute;left:5%;right:5%;top:25%;height:9%;z-index:1;border-bottom:8px solid var(--darkwood);background:rgba(255,255,255,.55);box-shadow:0 5px 0 rgba(51,51,51,.1)}
+.shelfItem{position:absolute;bottom:7px;width:38px;height:34px;object-fit:contain;opacity:.82;filter:drop-shadow(0 2px 1px rgba(0,0,0,.15))}
+.shelfItem.i1{left:10%}.shelfItem.i2{left:31%}.shelfItem.i3{left:61%}.shelfItem.i4{left:83%}
+#countertop{position:absolute;left:0;right:0;bottom:0;height:22%;min-height:105px;background:linear-gradient(180deg,#c98359 0,#a96542 100%);border-top:8px solid #6f3f2c;box-shadow:inset 0 8px 0 rgba(255,255,255,.18);z-index:2}
+#countertop:before{content:"";position:absolute;left:0;right:0;top:13px;height:4px;background:rgba(255,255,255,.18)}
+#counterProps{position:absolute;right:7%;bottom:calc(22% - 3px);z-index:6;display:flex;align-items:flex-end;gap:7px;pointer-events:none}
+#counterProps img{object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2))}
+#counterProps .pos{width:48px;height:48px}.counterSticker{width:43px;height:43px}
+#littleLabel{position:absolute;left:7%;bottom:calc(22% + 13px);z-index:6;background:#fff7ed;border:3px solid var(--ink);border-radius:9px;padding:5px 8px;font-size:11px;font-weight:700;box-shadow:3px 3px 0 rgba(51,51,51,.25);transform:rotate(-2deg)}
+/* HUD */
+#topbar{position:absolute;z-index:50;left:0;right:0;top:0;height:76px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.94);border-bottom:4px solid var(--coral);box-shadow:0 4px 0 rgba(51,51,51,.12)}
+.hudBox{min-width:92px;padding:6px 9px;border-radius:14px;background:white;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.hudLabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+#score{font-family:'Press Start 2P';font-size:14px;margin-top:3px}
+#livesImg{width:100px;height:39px;object-fit:contain;display:block;margin:-3px auto}
+#comboHud{font-family:'Press Start 2P';font-size:9px;color:var(--purple);text-align:center}
+#counter{font-size:10px;text-align:center;font-weight:700;margin-top:2px}#counter span{font-family:'Press Start 2P';font-size:9px}#counter.hidden{visibility:hidden}
+#coinHud{position:absolute;z-index:55;top:84px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:#fff;border:3px solid var(--ink);border-radius:999px;padding:4px 9px;box-shadow:3px 3px 0 var(--ink);font-weight:800;font-size:12px}
+#coinHud img{width:22px;height:22px;object-fit:contain}
+#levelBadge{position:absolute;z-index:55;top:126px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P';font-size:9px;background:var(--coral);color:white;border:3px solid var(--ink);border-radius:999px;padding:6px 9px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+#levelBadge.pop{animation:levelPop .7s ease}
+@keyframes levelPop{30%{transform:translateX(-50%) scale(1.35) rotate(-2deg)}65%{transform:translateX(-50%) scale(1) rotate(1deg)}}
+#lastLife{position:absolute;z-index:58;top:158px;left:50%;transform:translateX(-50%);display:none;font-family:'Press Start 2P';font-size:10px;color:white;background:#d94b4b;border:3px solid var(--ink);border-radius:12px;padding:7px 10px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+#lastLife.show{display:block;animation:lastLifePulse .8s infinite alternate}
+@keyframes lastLifePulse{to{transform:translateX(-50%) scale(1.06);filter:brightness(1.12)}}
+/* PLAYER / OBJECTS */
+#player{position:absolute;z-index:20;width:104px;height:104px;bottom:calc(22% - 12px);left:50%;transform:translateX(-50%);object-fit:contain;filter:drop-shadow(0 7px 4px rgba(0,0,0,.18));user-select:none;pointer-events:none}
+#player.catch{animation:catch .28s ease}#player.hit{animation:hit .45s ease}
+@keyframes catch{50%{transform:translateX(-50%) scale(1.18,.88) rotate(-3deg)}}
+@keyframes hit{25%{transform:translateX(-50%) rotate(-10deg)}50%{transform:translateX(-50%) rotate(10deg)}}
+.falling{position:absolute;z-index:10;width:64px;height:64px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 5px 2px rgba(0,0,0,.16));will-change:transform}
+.coinObj{filter:drop-shadow(0 4px 2px rgba(0,0,0,.2))}
+.floating{position:absolute;z-index:40;pointer-events:none;font-family:'Press Start 2P';font-size:14px;font-weight:bold;text-shadow:2px 2px white;animation:floatUp .65s ease forwards}
+@keyframes floatUp{to{transform:translateY(-48px) scale(1.1);opacity:0}}
+.spark{position:absolute;z-index:30;pointer-events:none;font-size:22px;animation:spark .4s ease forwards}
+@keyframes spark{to{transform:scale(1.7);opacity:0}}
+.trail{position:absolute;z-index:9;pointer-events:none;font-size:16px;animation:trailFade .35s ease forwards}
+@keyframes trailFade{to{transform:translateY(18px) scale(.6);opacity:0}}
+/* COMBOS / LEVELS */
+#comboBanner{position:absolute;z-index:70;top:174px;left:50%;transform:translateX(-50%) scale(.7);opacity:0;pointer-events:none;font-family:'Press Start 2P';font-size:13px;color:white;background:var(--purple);border:4px solid var(--ink);border-radius:14px;padding:11px 14px;box-shadow:5px 5px 0 var(--ink);white-space:nowrap}
+#comboBanner.show{animation:comboPop .9s ease forwards}
+@keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.7) rotate(-3deg)}20%{opacity:1;transform:translateX(-50%) scale(1.12) rotate(2deg)}55%{opacity:1;transform:translateX(-50%) scale(1) rotate(0)}100%{opacity:0;transform:translateX(-50%) translateY(-18px) scale(1.04)}}
+#countdown{position:absolute;inset:0;z-index:95;display:none;align-items:center;justify-content:center;font-family:'Press Start 2P';font-size:min(24vw,125px);font-weight:900;color:#fff;-webkit-text-stroke:8px var(--ink);paint-order:stroke fill;text-shadow:0 8px 0 rgba(51,51,51,.22),0 0 18px rgba(255,255,255,.55);pointer-events:none}
+.shake{animation:screenShake .28s ease}@keyframes screenShake{20%{transform:translate(5px,-3px)}40%{transform:translate(-5px,3px)}60%{transform:translate(4px,2px)}80%{transform:translate(-3px,-2px)}}
+/* INTRO */
+#intro,#gameover{position:absolute;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(51,51,51,.55);backdrop-filter:blur(3px);padding:18px}
+.panel{width:min(94vw,500px);max-height:94vh;overflow:auto;background:var(--cream);border:5px solid var(--ink);border-radius:26px;padding:22px 19px;text-align:center;box-shadow:8px 8px 0 var(--ink)}
+.panel h1{font-family:'Press Start 2P';font-size:20px;line-height:1.5;color:var(--coral);margin:0 0 12px}.panel p{font-size:17px;font-weight:600;line-height:1.25;margin:8px 0}.panel .small{font-size:13px;font-weight:500}
+.startBtn,.retryBtn{border:0;background:none;padding:0;margin-top:12px;cursor:pointer}.startBtn span,.retryBtn span{display:block;background:var(--coral);color:white;border:4px solid var(--ink);border-radius:15px;padding:14px 20px;font-family:'Press Start 2P';font-size:12px;box-shadow:5px 5px 0 var(--ink)}
+.startBtn:active span,.retryBtn:active span{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+#gameover{display:none}#gameover img{width:min(75vw,300px);height:auto;object-fit:contain}#finalScore{font-family:'Press Start 2P';font-size:12px;margin:5px 0 7px}.recordLine{font-size:14px;font-weight:800;margin:4px 0}.recordLine strong{color:var(--coral)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 7px}.rule{border:3px solid var(--ink);border-radius:15px;padding:7px 5px;background:#fff}.goodRule{background:#fff7ed}.badRule{background:#fff0f0}.ruleTitle{font-family:'Press Start 2P';font-size:8px;margin-bottom:5px}.goodRule .ruleTitle{color:#319b58}.badRule .ruleTitle{color:#d64b4b}.allItems{display:grid;grid-template-columns:repeat(4,1fr);gap:1px}.allItems img{width:32px;height:32px;object-fit:contain}
+.featureStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:9px 0}.feature{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:6px 3px;font-size:10px;font-weight:800}.feature b{display:block;font-family:'Press Start 2P';font-size:7px;margin-bottom:3px;color:var(--purple)}
+#hint{position:absolute;z-index:60;bottom:calc(22% + 7px);left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;background:rgba(255,255,255,.88);padding:6px 10px;border-radius:999px;opacity:.9;pointer-events:none}
+#touchHint{display:none}
+@media(max-width:520px){#brandSign{font-size:12px;top:37px}.hudBox{min-width:84px;padding:5px 7px}.hudLabel{font-size:9px}#score{font-size:11px}#livesImg{width:84px}.panel{padding:18px 13px}.panel h1{font-size:17px}.panel p{font-size:15px}.featureStrip{display:none}#shelf{top:24%}.shelfItem{width:30px;height:28px}#counterProps{right:3%}#littleLabel{left:3%;font-size:9px}}
+@media(min-width:700px){#player{width:125px;height:125px}.falling{width:76px;height:76px}#topbar{height:84px;padding:9px 24px}#coinHud{top:92px}#levelBadge{top:136px}#lastLife{top:170px}}
+#storeWall,#awning,#brandSign,#shelf,#counterProps,#littleLabel{display:none!important}
+</style>
+</head>
+<body>
+<div id="game">
+<div id="storeWall"><div id="awning"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div id="brandSign">KIRO 🛍️ PLAY</div><div id="shelf"><img class="shelfItem i1" src="caja.png"><img class="shelfItem i2" src="bolsa.png"><img class="shelfItem i3" src="regalo.png"><img class="shelfItem i4" src="posnet.png"></div></div>
+<div id="topbar">
+<div class="hudBox"><div class="hudLabel">Puntos</div><div id="score">0000</div></div>
+<div class="hudBox" style="text-align:center"><div class="hudLabel">Vidas</div><img id="livesImg" src="3.vidas.png"></div>
+<div class="hudBox"><div id="comboHud">COMBO</div><div id="counter">x<span>0</span></div></div>
+</div>
+<div id="coinHud"><img src="moneda.png"><span>0</span> MONEDAS</div>
+<div id="levelBadge">NIVEL 1</div><div id="lastLife">⚠️ ÚLTIMA VIDA ⚠️</div>
+<div id="countertop"></div><div id="counterProps"><img class="pos" src="posnet.png"><img class="counterSticker" src="cinta.png"><img class="counterSticker" src="birome.png"></div><div id="littleLabel">Kiro atiende acá ✨</div>
+<div id="comboBanner"></div><div id="countdown"></div>
+<div id="hint">👆 Arrastrá a Kiro</div>
+<img id="player" src="Idle.png" alt="Kiro">
+<div id="intro"><div class="panel">
+<h1>MISIÓN<br>MOSTRADOR</h1>
+<p>¡Ayudá a Kiro a ordenar el mostrador!</p>
+<div class="rules">
+<div class="rule goodRule"><div class="ruleTitle">✅ SUMA</div><div class="allItems">
+<img src="caja.png"><img src="bolsa.png"><img src="birome.png"><img src="cuaderno.png"><img src="cuadernos.png"><img src="lapiz.png"><img src="ticket.png"><img src="posnet.png"><img src="regalo.png"><img src="resaltador.png"><img src="calculadora.png"><img src="Pendrive.png">
+</div></div>
+<div class="rule badRule"><div class="ruleTitle">💥 MATA</div><div class="allItems">
+<img src="cafe.png"><img src="basura.png"><img src="bomba.png"><img src="Bollo.de.papel.png"><img src="banana.png"><img src="agua.png"><img src="tormenta.png">
+</div></div></div>
+<div class="featureStrip"><div class="feature"><b>🪙 MONEDAS</b>Juntalas para bonus</div><div class="feature"><b>🔥 COMBOS</b>5 y 10 activan premios</div><div class="feature"><b>🏆 RÉCORD</b>Tu mejor partida queda guardada</div></div>
+<p class="small">❤️ Tenés 3 vidas.<br>📱 En celular: arrastrá a Kiro por la pantalla.<br>⌨️ En PC: usá ← → o A / D.</p>
+<button class="startBtn" id="startBtn"><span>JUGAR</span></button>
+</div></div>
+<div id="gameover"><div class="panel"><img src="game over.png" alt="Game Over"><div id="finalScore">PUNTOS: 0000</div><div class="recordLine">🏆 RÉCORD: <strong id="recordScore">0000</strong></div><div class="recordLine">🪙 MONEDAS: <strong id="finalCoins">0</strong></div><div class="recordLine" id="recordMessage"></div><button class="retryBtn" id="retryBtn"><span>REVANCHA</span></button></div></div>
+</div>
+<script>
+const A='';
+const good=['caja.png','bolsa.png','birome.png','cuaderno.png','cuadernos.png','lapiz.png','ticket.png','posnet.png','regalo.png','resaltador.png','calculadora.png','Pendrive.png','tijera.png'];
+const bad=['café.png','basura.png','bomba.png','Bollo.de.papel.png','banana.png','agua.png','tormenta.png'];
+const scoreAssets={10:'10.png',50:'50.png',100:'100.png'};
+const lifeAssets={3:'3.vidas.png',2:'2.vidas.png',1:'1.vida.png',0:'no.vidas.png'};
+const game=document.getElementById('game'),player=document.getElementById('player');
+const scoreEl=document.getElementById('score'),livesEl=document.getElementById('livesImg'),counter=document.getElementById('counter'),counterN=counter.querySelector('span');
+const coinHud=document.querySelector('#coinHud span'),levelBadge=document.getElementById('levelBadge'),lastLife=document.getElementById('lastLife');
+const intro=document.getElementById('intro'),over=document.getElementById('gameover'),finalScore=document.getElementById('finalScore'),recordScore=document.getElementById('recordScore'),finalCoins=document.getElementById('finalCoins'),recordMessage=document.getElementById('recordMessage'),hint=document.getElementById('hint');
+let running=false,score=0,lives=3,combo=0,coins=0,spawnTimer=0,last=0,speed=170,spawnEvery=650,x=innerWidth/2,objects=[],uid=0,pointerActive=false,keys={},level=1,nextLevelScore=500,poseTimer=null,levelFlashTimer=null;
+function fmt(n){return String(n).padStart(4,'0')}
+function getRecord(){return Number(localStorage.getItem('kiro_mision_record')||0)}
+function setPlayerPose(name,duration=0){const m={idle:'Idle.png',right:'corre derecha.png',left:'corre izquierda.png',catch:'atrapa.png',hit:'golpe.pierdevida.png',jump:'salto.png',dodge:'esquiva.png'};if(!m[name])return;player.src=A+m[name];if(poseTimer)clearTimeout(poseTimer);if(duration)poseTimer=setTimeout(()=>{if(running)setPlayerPose('idle')},duration)}
+function setLives(){livesEl.src=A+lifeAssets[lives];if(lives===1)lastLife.classList.add('show');else lastLife.classList.remove('show')}
+function addFloat(px,py,asset){const el=document.createElement('img');el.className='floating';el.src=A+asset;el.style.width='70px';el.style.height='70px';el.style.objectFit='contain';el.style.left=(px-25)+'px';el.style.top=(py-20)+'px';game.appendChild(el);setTimeout(()=>el.remove(),700)}
+function textFloat(px,py,text,kind='normal'){const el=document.createElement('div');el.className='floating';el.textContent=text;el.style.left=(px-25)+'px';el.style.top=(py-20)+'px';if(kind==='coin')el.style.color='#d99b00';if(kind==='danger')el.style.color='#d94b4b';game.appendChild(el);setTimeout(()=>el.remove(),700)}
+function burst(px,py){['✨','⭐','💫'].forEach((ch,i)=>{const s=document.createElement('div');s.className='spark';s.textContent=ch;s.style.left=(px-12+i*12)+'px';s.style.top=(py-15-i*6)+'px';game.appendChild(s);setTimeout(()=>s.remove(),450)})}
+function trail(px,py){const t=document.createElement('div');t.className='trail';t.textContent='✨';t.style.left=(px-7)+'px';t.style.top=(py-10)+'px';game.appendChild(t);setTimeout(()=>t.remove(),350)}
+function spawn(){
+ const roll=Math.random();
+ const isCoin=roll<0.13,isBad=!isCoin&&roll<0.43;
+ const arr=isCoin?['moneda.png','monedas.png']:isBad?bad:good;const src=arr[Math.floor(Math.random()*arr.length)];
+ const el=document.createElement('img');el.className='falling'+(isCoin?' coinObj':'');el.src=A+src;
+ const w=innerWidth<700?64:76;const left=8+Math.random()*(innerWidth-w-16);el.style.left=left+'px';el.style.top='82px';game.appendChild(el);
+ const path=0,vx=0,amp=0,phase=0;
+ objects.push({el,x:left,y:82,bad:isBad,coin:isCoin,rot:Math.random()*24-12,id:uid++,vx,amp,phase,path})
+}
+function intersects(a,b){return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top}
+function updateLevel(){const newLevel=Math.min(7,Math.floor(score/500)+1);if(newLevel!==level){level=newLevel;nextLevelScore=level*500;levelBadge.textContent='NIVEL '+level;levelBadge.classList.remove('pop');void levelBadge.offsetWidth;levelBadge.classList.add('pop');const b=document.getElementById('comboBanner');b.textContent='🚀 ¡NIVEL '+level+'!';b.classList.remove('show');void b.offsetWidth;b.classList.add('show');burst(innerWidth/2,145)}}
+function catchObj(o){
+ const r=o.el.getBoundingClientRect(),pr=player.getBoundingClientRect(),px=(r.left+r.right)/2,py=(r.top+r.bottom)/2;o.el.remove();objects=objects.filter(v=>v.id!==o.id);
+ if(o.coin){coins++;coinHud.textContent=coins;if(coins%5===0){score+=50;scoreEl.textContent=fmt(score);textFloat(px,py,'🪙 +5 = +50','coin');burst(px,py);const b=document.getElementById('comboBanner');b.textContent='🪙 ¡BONUS DE MONEDAS!';b.classList.remove('show');void b.offsetWidth;b.classList.add('show');updateLevel()}else{textFloat(px,py,'🪙 +1','coin');burst(px,py)}return}
+ if(o.bad){lives--;combo=0;setLives();counter.classList.add('hidden');setPlayerPose('hit');player.classList.remove('hit');void player.offsetWidth;player.classList.add('hit');burst(px,py);addFloat(px,py,'atencion.png');game.classList.remove('shake');void game.offsetWidth;game.classList.add('shake');if(navigator.vibrate)navigator.vibrate([70,40,70]);if(lives<=0)endGame();return}
+ combo++;let pts=combo>=10?100:combo>=5?50:10;score+=pts;scoreEl.textContent=fmt(score);counter.classList.remove('hidden');counterN.textContent=combo;setPlayerPose('catch');player.classList.remove('catch');void player.offsetWidth;player.classList.add('catch');addFloat(px,py,scoreAssets[pts]);burst(px,py);if(combo===5||combo===10){const b=document.getElementById('comboBanner');b.textContent=combo===10?'🔥 ¡MODO KIRO! +100':'🔥 ¡COMBO X5! +50';b.classList.remove('show');void b.offsetWidth;b.classList.add('show');setPlayerPose('jump',700);addFloat(innerWidth/2,150,'combo.x5.png')}else if(combo>10&&combo%5===0){const b=document.getElementById('comboBanner');b.textContent='🔥 ¡COMBO X'+combo+'!';b.classList.remove('show');void b.offsetWidth;b.classList.add('show')}updateLevel()
+}
+function update(t){if(!running)return;const dt=Math.min((t-last)/1000,.05);last=t;
+ if(keys.ArrowLeft||keys.a||keys.A){movePlayer(x-440*dt);setPlayerPose('left',140)}if(keys.ArrowRight||keys.d||keys.D){movePlayer(x+440*dt);setPlayerPose('right',140)}
+ spawnTimer+=dt*1000;if(spawnTimer>=spawnEvery){spawnTimer=0;spawn()}
+ const pr=player.getBoundingClientRect();for(const o of [...objects]){o.y+=speed*dt;let drift=0;o.x=Math.max(4,Math.min(innerWidth-68,o.x));const rot=o.rot+=dt*(35+level*4);o.el.style.left=o.x+'px';o.el.style.transform=`translateY(${o.y-82}px) rotate(${rot}deg)`;if(Math.random()<.06)trail(o.x+32,o.y+12);
+ if(o.bad){const rr=o.el.getBoundingClientRect(),near=Math.abs((rr.left+rr.right)/2-(pr.left+pr.right)/2)<78&&rr.bottom>pr.top-55&&rr.top<pr.bottom+25;if(near)setPlayerPose('dodge',180)}
+ if(intersects(o.el.getBoundingClientRect(),pr)){catchObj(o);continue}if(o.y>innerHeight+90){o.el.remove();objects=objects.filter(v=>v.id!==o.id)}}
+ speed=Math.min(390,170+(level-1)*28+(speed<390?dt*3.2:0));spawnEvery=Math.max(250,650-(level-1)*55-(speed-170)*.55);requestAnimationFrame(update)}
+function movePlayer(clientX){x=Math.max(48,Math.min(innerWidth-48,clientX));player.style.left=x+'px'}
+function clearObjects(){objects.forEach(o=>o.el.remove());objects=[]}
+function startGame(){clearObjects();score=0;lives=3;combo=0;coins=0;level=1;nextLevelScore=500;speed=170;spawnEvery=650;spawnTimer=0;scoreEl.textContent='0000';coinHud.textContent='0';levelBadge.textContent='NIVEL 1';setLives();counter.classList.add('hidden');setPlayerPose('idle');movePlayer(innerWidth/2);intro.style.display='none';over.style.display='none';hint.style.display='none';const cd=document.getElementById('countdown');cd.style.display='flex';let n=3;cd.textContent=n;const timer=setInterval(()=>{n--;if(n>0)cd.textContent=n;else if(n===0)cd.textContent='¡YA!';else{clearInterval(timer);cd.style.display='none';hint.style.display='block';running=true;last=performance.now();requestAnimationFrame(update)}},650)}
+function endGame(){running=false;clearObjects();finalScore.textContent='PUNTOS: '+fmt(score);finalCoins.textContent=coins;const old=getRecord();if(score>old){localStorage.setItem('kiro_mision_record',String(score));recordScore.textContent=fmt(score);recordMessage.textContent='🎉 ¡NUEVO RÉCORD!';recordMessage.style.color='var(--coral)'}else{recordScore.textContent=fmt(old);recordMessage.textContent='💪 ¡Intentá superar tu récord!';recordMessage.style.color='var(--purple)'}over.style.display='flex';hint.style.display='none';lastLife.classList.remove('show');setPlayerPose('idle')}
+let dragOffset=0;
+game.addEventListener('pointerdown',e=>{if(!running)return;e.preventDefault();pointerActive=true;movePlayer(e.clientX);try{game.setPointerCapture(e.pointerId)}catch(_){} });
+game.addEventListener('pointermove',e=>{if(!running||!pointerActive)return;e.preventDefault();const old=x;movePlayer(e.clientX);setPlayerPose(e.clientX>=old?'right':'left')});
+game.addEventListener('pointerup',e=>{pointerActive=false;if(running)setPlayerPose('idle');try{game.releasePointerCapture(e.pointerId)}catch(_){} });game.addEventListener('pointercancel',()=>{pointerActive=false});
+window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key)){e.preventDefault();keys[e.key]=true}});window.addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key))keys[e.key]=false});
+window.addEventListener('resize',()=>movePlayer(Math.min(x,innerWidth-48)));
+document.getElementById('startBtn').onclick=startGame;document.getElementById('retryBtn').onclick=startGame;setLives();setPlayerPose('idle');counter.classList.add('hidden');recordScore.textContent=fmt(getRecord());
+</script>
+</body></html>
