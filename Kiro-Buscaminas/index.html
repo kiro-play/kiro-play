@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Kiro Buscaminas 💣</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap');
+:root{--coral:#E35D5B;--sand:#F2C6A0;--cream:#FBF6F1;--charcoal:#333;--green:#5e9f67;--shadow:#333;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--charcoal);font-family:'Chakra Petch',sans-serif}
+body{display:flex;justify-content:center;padding:0 12px 30px;overflow-x:hidden}
+.game{width:min(620px,100%)}
+.hero{margin:0 -12px 14px;background:var(--coral);border-bottom:6px solid var(--charcoal);border-radius:0 0 34px 34px;padding:18px 16px 16px;text-align:center;box-shadow:0 5px 0 rgba(51,51,51,.15)}
+.logo{width:112px;height:112px;object-fit:contain;display:block;margin:-2px auto 2px}
+.title{font-family:'Press Start 2P',monospace;font-size:clamp(20px,6vw,31px);line-height:1.35;margin:4px 0;color:#fff;text-shadow:3px 3px 0 var(--charcoal)}
+.subtitle{font-weight:700;font-size:17px;margin:5px 0;color:#fff}
+.hud{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:8px;margin:12px 0}
+.hudbox{background:#fff;border:3px solid var(--charcoal);border-radius:14px;padding:9px 6px;text-align:center;box-shadow:4px 4px 0 var(--sand);min-height:61px}
+.hudlabel{font-size:12px;font-weight:700;display:block;text-transform:uppercase}
+.hudvalue{font-family:'Press Start 2P',monospace;font-size:13px;display:block;margin-top:6px}
+#lives{letter-spacing:1px}
+.board-wrap{background:#fff;border:4px solid var(--charcoal);border-radius:20px;padding:10px;box-shadow:6px 6px 0 var(--sand);position:relative}
+.level{font-family:'Press Start 2P',monospace;font-size:11px;text-align:center;margin:3px 0 10px;line-height:1.6}
+.board{width:100%;display:grid;grid-template-columns:repeat(9,1fr);gap:3px;touch-action:none;user-select:none}
+.cell{aspect-ratio:1;border:0;border-radius:7px;padding:0;background:transparent;position:relative;cursor:pointer;min-width:0}
+.cell img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none}
+.cell.revealed{cursor:default}
+.number{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:clamp(10px,3.6vw,17px);font-weight:700;pointer-events:none;text-shadow:1px 1px 0 rgba(255,255,255,.8)}
+.number.n1{color:#2674c8}.number.n2{color:#25833d}.number.n3{color:#d43d2c}.number.n4{color:#5543a7}.number.n5{color:#c67918}.number.n6{color:#159e9c}.number.n7{color:#df5b99}.number.n8{color:#333}
+.flag-img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.flag-img img{width:86%;height:86%;object-fit:contain}
+.tip{text-align:center;font-size:13px;font-weight:600;margin:12px 3px 4px;line-height:1.45}
+.controls{display:flex;gap:9px;margin-top:13px}
+button{font:700 16px 'Chakra Petch',sans-serif;border:3px solid var(--charcoal);border-radius:13px;background:var(--coral);color:#fff;padding:12px 15px;box-shadow:4px 4px 0 var(--charcoal);cursor:pointer;flex:1}
+button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--charcoal)}
+button.secondary{background:var(--sand);color:var(--charcoal)}
+.overlay{position:absolute;inset:0;background:rgba(251,246,241,.96);border-radius:16px;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:5}
+.overlay.show{display:flex}
+.modal{max-width:390px}
+.modal img{width:125px;height:125px;object-fit:contain;margin:0 auto 4px}
+.modal h2{font-family:'Press Start 2P',monospace;font-size:20px;line-height:1.5;margin:4px 0 10px}
+.modal p{font-size:17px;font-weight:600;margin:8px 0 15px}
+.badge{display:inline-block;background:var(--sand);border:3px solid var(--charcoal);border-radius:999px;padding:7px 13px;font-family:'Press Start 2P',monospace;font-size:10px}
+.shake{animation:shake .35s ease}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.pop{animation:pop .28s ease}
+@keyframes pop{0%{transform:scale(.82)}100%{transform:scale(1)}}
+@media (min-width:600px){body{padding-top:12px}.hero{margin:0 0 14px}.board{gap:4px}.cell{border-radius:9px}.tip{font-size:14px}}
+</style>
+</head>
+<body>
+<main class="game">
+  <header class="hero">
+    <img class="logo" src="assets/logo.webp" alt="Kiro Buscaminas">
+    <h1 class="title">KIRO BUSCAMINAS 💣</h1>
+    <p class="subtitle">Encontrá las casillas seguras y evitá las minas.</p>
+  </header>
+
+  <section class="hud" aria-label="Marcadores">
+    <div class="hudbox"><span class="hudlabel">Vidas</span><span id="lives" class="hudvalue">❤️❤️❤️</span></div>
+    <div class="hudbox"><span class="hudlabel">Puntos</span><span id="score" class="hudvalue">0000</span></div>
+    <div class="hudbox"><span class="hudlabel">Nivel</span><span id="level" class="hudvalue">1</span></div>
+  </section>
+
+  <section class="board-wrap" id="boardWrap">
+    <div class="level" id="levelText">NIVEL 1 · 10 MINAS</div>
+    <div id="board" class="board" aria-label="Tablero de Kiro Buscaminas"></div>
+    <p class="tip">💡 Tocá una casilla para descubrirla. En PC, clic derecho para poner una bandera. En celu, mantené apretada una casilla para marcarla.</p>
+    <div class="controls"><button id="restart">REINICIAR</button><button id="flagMode" class="secondary">🚩 MARCAR</button></div>
+    <div id="overlay" class="overlay">
+      <div class="modal">
+        <img id="overlayKiro" src="assets/kirowinner.webp" alt="Kiro">
+        <h2 id="overlayTitle">¡GANASTE!</h2>
+        <p id="overlayText">Encontraste todas las casillas seguras.</p>
+        <span id="overlayBadge" class="badge">+100 PUNTOS</span>
+        <div class="controls"><button id="overlayBtn">SEGUIR</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+const A='assets/';
+const rows=10, cols=9;
+let level=1, lives=3, score=0, mines=10, board=[], firstClick=true, gameOver=false, flagMode=false, longPressTimer=null;
+const boardEl=document.getElementById('board'), livesEl=document.getElementById('lives'), scoreEl=document.getElementById('score'), levelEl=document.getElementById('level'), levelText=document.getElementById('levelText');
+const overlay=document.getElementById('overlay'), overlayKiro=document.getElementById('overlayKiro'), overlayTitle=document.getElementById('overlayTitle'), overlayText=document.getElementById('overlayText'), overlayBadge=document.getElementById('overlayBadge'), overlayBtn=document.getElementById('overlayBtn');
+const sprites={hidden:'fichanegra.webp',empty:'fichabca.webp',mine:'bomba.webp',flag:'bandera.webp',exploded:'asset-18.webp',flagged:'asset-19.webp',numbers:{1:'numero (1).webp',2:'numero (2).webp',3:'numero (3).webp',4:'numero (4).webp',5:'numero (5).webp',6:'numero (6).webp',7:'numero (7).webp',8:'numero (8).webp'}};
+
+function updateHud(){
+  livesEl.textContent='❤️'.repeat(Math.max(0,lives))+'🖤'.repeat(3-Math.max(0,lives));
+  scoreEl.textContent=String(score).padStart(4,'0');
+  levelEl.textContent=level;
+  levelText.textContent=`NIVEL ${level} · ${mines} MINAS`;
+}
+function neighbors(i){const r=Math.floor(i/cols),c=i%cols,out=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const rr=r+dr,cc=c+dc;if(rr>=0&&rr<rows&&cc>=0&&cc<cols)out.push(rr*cols+cc)}return out}
+function buildMines(safeIndex){
+  const total=rows*cols; board=Array.from({length:total},()=>({mine:false,revealed:false,flag:false,count:0,exploded:false}));
+  let placed=0; while(placed<mines){const i=Math.floor(Math.random()*total); if(i===safeIndex||board[i].mine)continue; board[i].mine=true;placed++}
+  board.forEach((cell,i)=>{if(!cell.mine)cell.count=neighbors(i).filter(n=>board[n].mine).length});
+}
+function makeCell(i){
+  const cell=board[i], el=document.createElement('button'); el.className='cell'; el.type='button'; el.dataset.i=i; el.setAttribute('aria-label','Casilla');
+  renderCell(el,i);
+  el.addEventListener('click',()=>{ if(el.dataset.long==='1'){el.dataset.long='0';return} handleReveal(i); });
+  el.addEventListener('contextmenu',e=>{e.preventDefault();toggleFlag(i)});
+  el.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){clearTimeout(longPressTimer);longPressTimer=setTimeout(()=>{toggleFlag(i);el.dataset.long='1'},480)}});
+  el.addEventListener('pointerup',e=>{if(e.pointerType==='touch'){clearTimeout(longPressTimer)}});
+  el.addEventListener('pointercancel',()=>clearTimeout(longPressTimer));
+  el.addEventListener('pointerleave',()=>clearTimeout(longPressTimer));
+  return el;
+}
+function renderCell(el,i){
+  const c=board[i]; el.innerHTML=''; el.className='cell'+(c.revealed?' revealed':'');
+  if(c.revealed){
+    if(c.mine){const img=document.createElement('img');img.src=A+(c.exploded?sprites.exploded:sprites.mine);img.alt='Mina';el.appendChild(img)}
+    else if(c.count===0){const img=document.createElement('img');img.src=A+sprites.empty;img.alt='Casilla vacía';el.appendChild(img)}
+    else{const img=document.createElement('img');img.src=A+sprites.numbers[c.count];img.alt='Número '+c.count;el.appendChild(img)}
+  }else if(c.flag){const img=document.createElement('img');img.src=A+sprites.flagged;img.alt='Bandera';el.appendChild(img)}
+  else{const img=document.createElement('img');img.src=A+sprites.hidden;img.alt='Casilla cerrada';el.appendChild(img)}
+}
+function renderAll(){[...boardEl.children].forEach((el,i)=>renderCell(el,i));}
+function reveal(i){
+  if(gameOver||board[i].revealed||board[i].flag)return;
+  board[i].revealed=true;
+  if(board[i].mine){
+    board[i].exploded=true; lives--; score=Math.max(0,score-25); renderAll(); boardEl.classList.remove('shake'); void boardEl.offsetWidth; boardEl.classList.add('shake'); updateHud();
+    if(lives<=0){setTimeout(()=>endGame(false),500)} else {setTimeout(()=>newLifeBoard(),700)}
+    return;
+  }
+  score+=10;
+  if(board[i].count===0) neighbors(i).forEach(n=>{if(!board[n].revealed&&!board[n].mine)revealSafe(n)});
+  renderAll(); updateHud(); checkWin();
+}
+function revealSafe(i){if(board[i].revealed||board[i].flag||board[i].mine)return;board[i].revealed=true;score+=10;if(board[i].count===0)neighbors(i).forEach(revealSafe)}
+function handleReveal(i){
+  if(gameOver)return;
+  if(flagMode){toggleFlag(i);return}
+  if(firstClick){firstClick=false;buildMines(i);renderAll()}
+  reveal(i);
+}
+function toggleFlag(i){if(gameOver||board[i].revealed)return;board[i].flag=!board[i].flag;renderAll();/* Las banderas son opcionales: nunca son requisito para ganar. */}
+function checkWin(){/* Se gana al descubrir TODAS las casillas seguras. Las minas pueden quedar sin marcar. */ const safeCells=board.filter(c=>!c.mine); const safe= safeCells.length>0 && safeCells.every(c=>c.revealed); if(safe){score+=100+level*25;renderAll();setTimeout(()=>endGame(true),250)}}
+function newLifeBoard(){firstClick=true;buildMines(Math.floor(Math.random()*rows*cols));renderAll();updateHud()}
+function endGame(win){gameOver=true;overlay.classList.add('show');if(win){overlayKiro.src=A+'kirowinner.webp';overlayTitle.textContent='¡NIVEL SUPERADO!';overlayText.textContent='Kiro encontró todas las casillas seguras. ¡No hace falta marcar las minas!';overlayBadge.textContent='+'+(100+level*25)+' PUNTOS';overlayBtn.textContent='SIGUIENTE NIVEL'}else{overlayKiro.src=A+'kirogolpeado.webp';overlayTitle.textContent='GAME OVER';overlayText.textContent='Las minas le ganaron a Kiro esta vez.';overlayBadge.textContent='PUNTAJE '+String(score).padStart(4,'0');overlayBtn.textContent='REVANCHA'}}
+function nextAction(){overlay.classList.remove('show');if(gameOver&&lives<=0){level=1;lives=3;score=0}else if(gameOver){level++;mines=Math.min(24,10+Math.floor((level-1)*2));lives=3}else return;gameOver=false;firstClick=true;flagMode=false;document.getElementById('flagMode').textContent='🚩 MARCAR';buildMines(0);boardEl.innerHTML='';for(let i=0;i<rows*cols;i++)boardEl.appendChild(makeCell(i));updateHud()}
+function restart(){overlay.classList.remove('show');level=1;lives=3;score=0;mines=10;gameOver=false;firstClick=true;flagMode=false;document.getElementById('flagMode').textContent='🚩 MARCAR';board=Array.from({length:rows*cols},()=>({mine:false,revealed:false,flag:false,count:0,exploded:false}));boardEl.innerHTML='';for(let i=0;i<rows*cols;i++)boardEl.appendChild(makeCell(i));updateHud()}
+document.getElementById('restart').addEventListener('click',restart);
+document.getElementById('flagMode').addEventListener('click',()=>{flagMode=!flagMode;document.getElementById('flagMode').textContent=flagMode?'🚩 MARCANDO':'🚩 MARCAR'});
+overlayBtn.addEventListener('click',()=>{if(lives<=0){restart();}else{level++;mines=Math.min(24,10+Math.floor((level-1)*2));lives=3;gameOver=false;firstClick=true;flagMode=false;document.getElementById('flagMode').textContent='🚩 MARCAR';overlay.classList.remove('show');board=Array.from({length:rows*cols},()=>({mine:false,revealed:false,flag:false,count:0,exploded:false}));boardEl.innerHTML='';for(let i=0;i<rows*cols;i++)boardEl.appendChild(makeCell(i));updateHud()}});
+restart();
+</script>
+</body>
+</html>
