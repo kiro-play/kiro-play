@@ -89,6 +89,33 @@
       font-weight: 600;
     }
 
+    .store-button {
+      display: inline-block;
+      margin-top: 22px;
+      padding: 11px 18px;
+      border: 3px solid var(--carbon);
+      border-radius: 13px;
+      background: var(--hueso);
+      color: var(--carbon);
+      font-family: "Chakra Petch", sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 4px 4px 0 var(--carbon);
+      transition: all 0.12s ease;
+    }
+
+    .store-button:hover {
+      background: var(--arena);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--carbon);
+    }
+
+    .store-button:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--carbon);
+    }
+
     main {
       width: min(1050px, 92%);
       margin: 45px auto;
@@ -186,18 +213,6 @@
       font-size: 15px;
     }
 
-    .store-link {
-      display: inline-block;
-      margin-top: 12px;
-      color: var(--coral);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .store-link:hover {
-      text-decoration: underline;
-    }
-
     @media (max-width: 600px) {
       header {
         padding: 32px 18px 38px;
@@ -225,14 +240,29 @@
 <body>
 
   <header>
-    <div class="mini-title">BIENVENIDO A</div>
 
-    <h1>KIRO PLAY 🎮</h1>
+    <div class="mini-title">
+      BIENVENIDO A
+    </div>
+
+    <h1>
+      KIRO PLAY 🎮
+    </h1>
 
     <div class="subtitle">
       Jugá mientras esperás 💗
     </div>
+
+    <a
+      class="store-button"
+      href="https://somoskiro.com.ar"
+      target="_blank"
+    >
+      🛍️ VOLVER A LA TIENDA
+    </a>
+
   </header>
+
 
   <main>
 
@@ -242,11 +272,15 @@
 
     <section class="games">
 
+
       <!-- MISIÓN MOSTRADOR -->
       <article class="game-card">
+
         <div class="game-icon">🕹️</div>
 
-        <h2>Misión Mostrador</h2>
+        <h2>
+          Misión Mostrador
+        </h2>
 
         <p>
           Sobreviví al caos del mostrador.
@@ -258,14 +292,18 @@
         >
           JUGAR
         </button>
+
       </article>
 
 
       <!-- KIRO CROSS -->
       <article class="game-card">
+
         <div class="game-icon">🏎️</div>
 
-        <h2>Kiro Cross</h2>
+        <h2>
+          Kiro Cross
+        </h2>
 
         <p>
           Cruzá la calle sin que te lleven puesto.
@@ -277,28 +315,84 @@
         >
           JUGAR
         </button>
+
       </article>
 
 
-     <!-- KIRO BUSCAMINAS -->
-<article class="game-card">
-  <div class="game-icon">💣</div>
-  <h2>Kiro Buscaminas</h2>
-  <p>Encontrá las casillas seguras y evitá las minas.</p>
-  <button
-    class="play-button"
-    onclick="window.location.href='Kiro-Buscaminas/'"
-  >
-    JUGAR
-  </button>
-</article>
+      <!-- KIRO BUSCAMINAS -->
+      <article class="game-card">
+
+        <div class="game-icon">💣</div>
+
+        <h2>
+          Kiro Buscaminas
+        </h2>
+
+        <p>
+          Encontrá las casillas seguras y evitá las minas.
+        </p>
+
+        <button
+          class="play-button"
+          onclick="window.location.href='Kiro-Buscaminas/'"
+        >
+          JUGAR
+        </button>
+
+      </article>
+
+
+      <!-- KIRO VIBORITA -->
+      <article class="game-card">
+
+        <div class="game-icon">🐍</div>
+
+        <h2>
+          Kiro Viborita
+        </h2>
+
+        <p>
+          Comé, crecé y no choques con vos mismo.
+        </p>
+
+        <button
+          class="play-button"
+          onclick="window.location.href='Kiro-Viborita/index.html'"
+        >
+          JUGAR
+        </button>
+
+      </article>
+
+
+      <!-- KIRO BREAKOUT -->
+      <article class="game-card">
+
+        <div class="game-icon">🧱</div>
+
+        <h2>
+          Kiro Breakout
+        </h2>
+
+        <p>
+          Rompé los bloques y conseguí puntos.
+        </p>
+
+        <div class="play-button coming-soon">
+          PRÓXIMAMENTE
+        </div>
+
+      </article>
 
 
       <!-- ENCONTRÁ A KIRO -->
       <article class="game-card">
+
         <div class="game-icon">🔎</div>
 
-        <h2>Encontrá a Kiro</h2>
+        <h2>
+          Encontrá a Kiro
+        </h2>
 
         <p>
           ¿Podés encontrarlo?
@@ -307,14 +401,38 @@
         <div class="play-button coming-soon">
           PRÓXIMAMENTE
         </div>
+
+      </article>
+
+
+      <!-- KIRO-MAN -->
+      <article class="game-card">
+
+        <div class="game-icon">👾</div>
+
+        <h2>
+          Kiro-Man
+        </h2>
+
+        <p>
+          Recorré el laberinto y juntá todo.
+        </p>
+
+        <div class="play-button coming-soon">
+          PRÓXIMAMENTE
+        </div>
+
       </article>
 
 
       <!-- KIRO RUN -->
       <article class="game-card">
+
         <div class="game-icon">🏃</div>
 
-        <h2>Kiro Run</h2>
+        <h2>
+          Kiro Run
+        </h2>
 
         <p>
           Corré, esquivá y conseguí puntos.
@@ -323,25 +441,20 @@
         <div class="play-button coming-soon">
           PRÓXIMAMENTE
         </div>
+
       </article>
+
 
     </section>
 
   </main>
+
 
   <footer>
 
     <div>
       Hecho con 💗 por Kiro
     </div>
-
-    <a
-      class="store-link"
-      href="https://somoskiro.com.ar"
-      target="_blank"
-    >
-      🛍️ Volver a la tienda
-    </a>
 
   </footer>
 
