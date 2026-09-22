@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Kiro Viborita 🐍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#E35D5B;--sand:#F2C6A0;--cream:#FBF6F1;--charcoal:#333333}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--charcoal);font-family:'Chakra Petch',sans-serif}
+body{display:flex;justify-content:center;padding:0 12px 28px;overflow-x:hidden}
+.game{width:min(650px,100%)}
+.hero{margin:0 -12px 14px;background:var(--coral);border-bottom:6px solid var(--charcoal);border-radius:0 0 34px 34px;padding:24px 16px 18px;text-align:center;box-shadow:0 5px 0 rgba(51,51,51,.15)}
+.title{font-family:'Press Start 2P',monospace;font-size:clamp(21px,6vw,32px);line-height:1.4;margin:3px 0;color:#fff;text-shadow:3px 3px 0 var(--charcoal)}
+.subtitle{font-size:17px;font-weight:700;color:#fff;margin:8px 0 0}
+.hud{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;margin:12px 0}
+.hudbox{background:#fff;border:3px solid var(--charcoal);border-radius:14px;padding:9px 6px;text-align:center;box-shadow:4px 4px 0 var(--sand);min-height:62px}
+.hudlabel{display:block;font-size:12px;font-weight:700;text-transform:uppercase}.hudvalue{display:block;font-family:'Press Start 2P',monospace;font-size:12px;margin-top:7px}
+.board-wrap{background:#fff;border:4px solid var(--charcoal);border-radius:20px;padding:10px;box-shadow:6px 6px 0 var(--sand);position:relative}
+.board{display:grid;grid-template-columns:repeat(18,1fr);gap:2px;width:100%;aspect-ratio:18/22;background:#f0c9a8;border:3px solid var(--charcoal);border-radius:12px;padding:3px;touch-action:none;user-select:none;overflow:hidden}
+.cell{position:relative;min-width:0;min-height:0;background:rgba(255,255,255,.18);border-radius:4px}
+.snake-img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;pointer-events:none}.snake-head{inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);z-index:2}
+.tail{position:absolute;inset:0;pointer-events:none}
+.tail:after{content:"";position:absolute;width:42%;height:28%;background:#e35d5b;border:2px solid #333;border-left:0;border-radius:0 999px 999px 0;right:-15%;top:36%;transform:rotate(0deg);z-index:0}
+.food{position:absolute;inset:5%;width:90%;height:90%;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(51,51,51,.2));pointer-events:none}
+.controls{display:flex;gap:9px;margin-top:12px}.controls button{flex:1}
+button{font:700 16px 'Chakra Petch',sans-serif;border:3px solid var(--charcoal);border-radius:13px;background:var(--coral);color:#fff;padding:12px 15px;box-shadow:4px 4px 0 var(--charcoal);cursor:pointer}button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--charcoal)}
+.tip{text-align:center;font-size:13px;font-weight:600;line-height:1.45;margin:11px 2px 2px}
+.overlay{position:absolute;inset:0;background:rgba(251,246,241,.96);border-radius:16px;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:10}.overlay.show{display:flex}.modal{max-width:390px}.modal img{width:125px;height:125px;object-fit:contain}.modal h2{font-family:'Press Start 2P',monospace;font-size:20px;line-height:1.5;margin:3px 0 10px}.modal p{font-size:17px;font-weight:600;line-height:1.4;margin:8px 0 15px}.badge{display:inline-block;background:var(--sand);border:3px solid var(--charcoal);border-radius:999px;padding:7px 13px;font-family:'Press Start 2P',monospace;font-size:10px}
+.shake{animation:shake .35s ease}@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@media(min-width:600px){body{padding-top:12px}.hero{margin:0 0 14px}.board{gap:3px}}
+</style>
+</head>
+<body>
+<main class="game">
+<header class="hero"><h1 class="title">KIRO VIBORITA 🐍</h1><p class="subtitle">Comé, crecé y no choques con vos mismo.</p></header>
+<section class="hud"><div class="hudbox"><span class="hudlabel">Vidas</span><span id="lives" class="hudvalue">❤️❤️❤️</span></div><div class="hudbox"><span class="hudlabel">Puntos</span><span id="score" class="hudvalue">0000</span></div><div class="hudbox"><span class="hudlabel">Récord</span><span id="best" class="hudvalue">0000</span></div></section>
+<section class="board-wrap" id="wrap">
+<div id="board" class="board" aria-label="Kiro Viborita"></div>
+<p class="tip">📱 Deslizá el dedo para cambiar de dirección · 🖥️ En PC usá las flechas o WASD</p>
+<div class="controls"><button id="pause">PAUSAR</button><button id="restart">REINICIAR</button></div>
+<div id="overlay" class="overlay show"><div class="modal"><img id="overlayImg" src="winner.png" alt="Kiro"><h2 id="overlayTitle">KIRO VIBORITA 🐍</h2><p id="overlayText">Comé, crecé y tratá de llegar cada vez más lejos.</p><span id="badge" class="badge">LISTA PARA JUGAR</span><div class="controls"><button id="overlayBtn">▶ JUGAR</button></div></div></div>
+</section>
+</main>
+<script>
+const COLS=18, ROWS=22;
+const DIRS={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+const imgs={up:'up.png',down:'down.png',left:'left.png',right:'right.png',body:'body.png',apple:'apple.png',loser:'loser.png',winner:'winner.png'};
+const boardEl=document.getElementById('board'), livesEl=document.getElementById('lives'), scoreEl=document.getElementById('score'), bestEl=document.getElementById('best'), pauseBtn=document.getElementById('pause');
+const overlay=document.getElementById('overlay'), overlayImg=document.getElementById('overlayImg'), overlayTitle=document.getElementById('overlayTitle'), overlayText=document.getElementById('overlayText'), badge=document.getElementById('badge');
+let snake,dir,nextDir,food,lives,score,best=Number(localStorage.getItem('kiroViboritaBest')||0),running=false,paused=false,gameOver=false,timer=null,speed=230,grow=0,started=false,touchStart=null;
+bestEl.textContent=String(best).padStart(4,'0');
+function updateHud(){livesEl.textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);scoreEl.textContent=String(score).padStart(4,'0');bestEl.textContent=String(Math.max(best,score)).padStart(4,'0')}
+function key(p){return p.x+','+p.y}
+function opposite(a,b){return DIRS[a].x===-DIRS[b].x&&DIRS[a].y===-DIRS[b].y}
+function randomFood(){let free=[];for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){if(!snake.some(s=>s.x===x&&s.y===y))free.push({x,y})}return free[Math.floor(Math.random()*free.length)]}
+function makeCell(){const d=document.createElement('div');d.className='cell';return d}
+function render(){boardEl.innerHTML='';const cells=Array.from({length:COLS*ROWS},makeCell);cells.forEach((c,i)=>boardEl.appendChild(c));
+  snake.forEach((seg,i)=>{const c=cells[seg.y*COLS+seg.x];if(!c)return;const img=document.createElement('img');img.className='snake-img'+(i===0?' snake-head':'');img.src=imgs[i===0?dir:'body'];img.alt='';c.appendChild(img);
+    if(i===snake.length-1&&snake.length>1){const t=document.createElement('div');t.className='tail';c.appendChild(t)}
+  });
+  if(food){const c=cells[food.y*COLS+food.x];const img=document.createElement('img');img.className='food';img.src=imgs.apple;img.alt='';c.appendChild(img)}
+}
+function resetSnake(){snake=[{x:Math.floor(COLS/2),y:Math.floor(ROWS/2)},{x:Math.floor(COLS/2)-1,y:Math.floor(ROWS/2)},{x:Math.floor(COLS/2)-2,y:Math.floor(ROWS/2)}];dir='right';nextDir='right';grow=0;food=randomFood();render()}
+function start(){clearTimeout(timer);lives=3;score=0;speed=230;running=true;paused=false;gameOver=false;started=true;overlay.classList.remove('show');pauseBtn.textContent='PAUSAR';resetSnake();updateHud();tick()}
+function tick(){if(!running||paused)return;clearTimeout(timer);timer=setTimeout(step,speed)}
+function step(){if(!running)return;if(!opposite(dir,nextDir))dir=nextDir;const head={x:snake[0].x+DIRS[dir].x,y:snake[0].y+DIRS[dir].y};const hitWall=head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS;const bodyToCheck=snake.slice(0,snake.length-(grow>0?0:1));const hitSelf=bodyToCheck.some(s=>s.x===head.x&&s.y===head.y);if(hitWall||hitSelf){loseLife();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=25;grow++;food=randomFood();speed=Math.max(95,230-Math.floor(score/75)*9)}else if(grow>0){grow--}else{snake.pop()}render();updateHud();tick()}
+function loseLife(){lives--;running=false;paused=false;gameOver=(lives<=0);clearTimeout(timer);pauseBtn.textContent='PAUSAR';if(score>best){best=score;localStorage.setItem('kiroViboritaBest',best)}updateHud();render();overlay.classList.add('show');overlayImg.src=imgs.loser;overlayTitle.textContent=lives>0?'¡CHOQUE!':'GAME OVER';overlayText.textContent=lives>0?'Kiro perdió una vida. ¡Seguimos!':'Kiro se chocó demasiado. ¡Probá de nuevo!';badge.textContent=String(score).padStart(4,'0')+' PUNTOS';document.getElementById('overlayBtn').textContent=lives>0?'SEGUIR':'REVANCHA'}
+function setDir(d){if(!running||paused)return;if(!opposite(dir,d))nextDir=d}
+function togglePause(){if(!started||gameOver)return;if(!running&&overlay.classList.contains('show'))return;paused=!paused;if(paused){clearTimeout(timer);pauseBtn.textContent='CONTINUAR';overlay.classList.add('show');overlayImg.src=imgs.winner;overlayTitle.textContent='PAUSA';overlayText.textContent='Tranqui, Kiro se queda quietito. 😌';badge.textContent='PUNTAJE '+String(score).padStart(4,'0');document.getElementById('overlayBtn').textContent='▶ CONTINUAR'}else{overlay.classList.remove('show');pauseBtn.textContent='PAUSAR';tick()}}
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();const map={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};if(map[k]){e.preventDefault();setDir(map[k])}});
+boardEl.addEventListener('touchstart',e=>{const t=e.changedTouches[0];touchStart={x:t.clientX,y:t.clientY}},{passive:true});
+boardEl.addEventListener('touchend',e=>{if(!touchStart)return;const t=e.changedTouches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;touchStart=null;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;if(Math.abs(dx)>Math.abs(dy))setDir(dx>0?'right':'left');else setDir(dy>0?'down':'up')},{passive:true});
+document.getElementById('restart').onclick=start;
+pauseBtn.onclick=togglePause;
+document.getElementById('overlayBtn').onclick=()=>{
+  if(!started){start();return}
+  if(paused){paused=false;running=true;overlay.classList.remove('show');pauseBtn.textContent='PAUSAR';tick();return}
+  if(lives>0){overlay.classList.remove('show');running=true;resetSnake();tick();updateHud()}else start();
+};
+// El juego queda esperando el botón JUGAR al entrar.
+updateHud();
+render();
+</script>
+</body>
+</html>
