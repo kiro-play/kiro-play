@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Kiro Flappy 🪽</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap');
+:root{--coral:#E35D5B;--arena:#F2C6A0;--cream:#FBF6F1;--dark:#333;--sky:#9EDCF0;--pipe:#78B86A;--pipe2:#5C914F;--ground:#D5A36A}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--dark);font-family:"Chakra Petch",sans-serif}
+body{display:flex;justify-content:center;padding:12px;overflow-x:hidden}
+.game{width:min(620px,100%)}
+.header{background:var(--coral);border:4px solid var(--dark);border-radius:24px;box-shadow:7px 7px 0 var(--dark);padding:18px 14px 16px;text-align:center}
+.title{font-family:"Press Start 2P";font-size:clamp(21px,6vw,34px);color:#fff;text-shadow:4px 4px 0 var(--dark);line-height:1.4}
+.subtitle{font-size:17px;font-weight:700;margin-top:7px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+.stat{background:var(--cream);border:3px solid var(--dark);border-radius:13px;padding:9px;box-shadow:3px 3px 0 var(--dark)}
+.label{font-size:11px;font-weight:700}.value{font-family:"Press Start 2P";font-size:15px;margin-top:6px}
+.stage-wrap{position:relative;margin-top:24px;background:#fff;border:4px solid var(--dark);border-radius:25px;padding:10px;box-shadow:8px 8px 0 var(--arena)}
+canvas{display:block;width:100%;height:auto;aspect-ratio:420/620;background:var(--sky);border:3px solid var(--dark);border-radius:16px;touch-action:none}
+.start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:14px 28px;background:var(--coral);color:#fff;border:4px solid var(--dark);border-radius:15px;box-shadow:5px 5px 0 var(--dark);font:700 19px "Chakra Petch";cursor:pointer}
+.start:active{transform:translate(calc(-50% + 3px),calc(-50% + 3px))}
+.help{text-align:center;font-size:14px;font-weight:600;margin:12px 3px 2px}
+.overlay{position:fixed;inset:0;background:rgba(51,51,51,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.overlay.show{display:flex}
+.modal{width:min(440px,100%);background:var(--cream);border:4px solid var(--dark);border-radius:22px;box-shadow:9px 9px 0 var(--dark);padding:28px 22px;text-align:center}
+.modal h2{font-family:"Press Start 2P";font-size:17px;line-height:1.7;margin:0 0 16px}
+.big{font-family:"Press Start 2P";font-size:36px;color:var(--coral);text-shadow:3px 3px 0 var(--dark);margin:16px}
+.modal p{font-size:18px;margin:10px 0 20px}
+button.revenge{font:700 17px "Chakra Petch";border:3px solid var(--dark);border-radius:13px;background:var(--coral);color:#fff;padding:12px 20px;box-shadow:4px 4px 0 var(--dark);cursor:pointer}
+@media(max-width:560px){body{padding:8px}.stage-wrap{margin-top:18px;padding:8px}.help{font-size:13px}.value{font-size:12px}}
+</style>
+</head>
+<body>
+<main class="game">
+<header class="header">
+<div class="title">KIRO FLAPPY 🪽</div>
+<div class="subtitle">Volá, esquivá y sumá puntos.</div>
+<div class="stats">
+<div class="stat"><div class="label">PUNTOS</div><div class="value" id="score">0000</div></div>
+<div class="stat"><div class="label">RÉCORD</div><div class="value" id="best">0000</div></div>
+</div>
+</header>
+<section class="stage-wrap">
+<canvas id="game" width="420" height="620"></canvas>
+<button class="start" id="start">🎮 JUGAR</button>
+</section>
+<div class="help">📱 Tocá · 🖥️ Click o ESPACIO para volar</div>
+</main>
+<div class="overlay" id="end">
+<div class="modal">
+<h2>💥 ¡SE TERMINÓ!</h2>
+<p>Te chocaste 😭</p>
+<div class="big" id="finalScore">0</div>
+<p id="finalInfo"></p>
+<button class="revenge" id="again">🔄 REVANCHA</button>
+</div>
+</div>
+<script>
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+const scoreEl=document.getElementById("score"),bestEl=document.getElementById("best");
+const startBtn=document.getElementById("start"),end=document.getElementById("end");
+const finalScore=document.getElementById("finalScore"),finalInfo=document.getElementById("finalInfo"),again=document.getElementById("again");
+const W=canvas.width,H=canvas.height,GROUND=54;
+const kiroImg=new Image();
+kiroImg.src="kiro-flappy.png";
+let bird, pipes, score, best=Number(localStorage.getItem("kiroFlappyBest")||0),running=false,over=false,last=0,spawn=0;
+bestEl.textContent=String(best).padStart(4,"0");
+
+function reset(){
+ bird={x:105,y:H/2-26,vy:0,w:48,h:52};
+ pipes=[];score=0;spawn=0;over=false;
+ scoreEl.textContent="0000";
+ draw();
+}
+function flap(){
+ if(!running){startGame();return}
+ if(over)return;
+ bird.vy=-330;
+}
+function startGame(){
+ reset();running=true;startBtn.style.display="none";last=performance.now();requestAnimationFrame(loop);
+}
+function gameOver(){
+ if(over)return;
+ over=true;running=false;
+ if(score>best){best=score;localStorage.setItem("kiroFlappyBest",best)}
+ bestEl.textContent=String(best).padStart(4,"0");
+ finalScore.textContent=score;
+ finalInfo.textContent=score===best && score>0 ? "🏆 ¡Nuevo récord!" : "Récord: "+best;
+ end.classList.add("show");
+}
+function spawnPipe(){
+ const gap=170-Math.min(score*2.2,35);
+ const minTop=75,maxTop=H-GROUND-gap-75;
+ const top=minTop+Math.random()*(maxTop-minTop);
+ pipes.push({x:W+20,w:58,top,gap,passed:false});
+}
+function hit(a,b){
+ const horizontal=a.x+a.w>b.x && a.x<b.x+b.w;
+ if(!horizontal)return false;
+ const gapTop=b.top;
+ const gapBottom=b.top+b.gap;
+ const hitsTop=a.y<gapTop && a.y+a.h>0;
+ const hitsBottom=a.y+a.h>gapBottom && a.y<H-GROUND;
+ return hitsTop || hitsBottom;
+}
+function update(dt){
+ const speed=145+Math.min(score*2.2,45);
+ const gravity=650+Math.min(score*12,250);
+ bird.vy+=gravity*dt;
+ bird.vy=Math.min(bird.vy,620);
+ bird.y+=bird.vy*dt;
+ spawn+=dt;
+ if(spawn>1.55){spawn=0;spawnPipe()}
+ for(const p of pipes){
+   p.x-=speed*dt;
+   if(!p.passed && p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=String(score).padStart(4,"0")}
+   if(hit(bird,p))gameOver();
+ }
+ pipes=pipes.filter(p=>p.x+p.w>-10);
+ if(bird.y<0 || bird.y+bird.h>H-GROUND)gameOver();
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ // cielo
+ ctx.fillStyle="#9EDCF0";ctx.fillRect(0,0,W,H);
+ // nubes
+ ctx.fillStyle="rgba(255,255,255,.55)";
+ for(const c of [{x:60,y:85,s:1},{x:310,y:145,s:.8},{x:205,y:45,s:.6}]){
+   ctx.beginPath();ctx.arc(c.x,c.y,25*c.s,0,Math.PI*2);ctx.arc(c.x+28*c.s,c.y+3,19*c.s,0,Math.PI*2);ctx.fill();
+ }
+ // pipes
+ for(const p of pipes){
+   ctx.fillStyle="#5C914F";ctx.fillRect(p.x,0,p.w,p.top);
+   ctx.fillStyle="#78B86A";ctx.fillRect(p.x-5,p.top-16,p.w+10,16);
+   const by=p.top+p.gap;
+   ctx.fillStyle="#5C914F";ctx.fillRect(p.x,by,p.w,H-GROUND-by);
+   ctx.fillStyle="#78B86A";ctx.fillRect(p.x-5,by,p.w+10,16);
+ }
+ // ground
+ ctx.fillStyle="#D5A36A";ctx.fillRect(0,H-GROUND,W,GROUND);
+ ctx.fillStyle="#78B86A";ctx.fillRect(0,H-GROUND,W,9);
+ // Kiro con alitas
+ if(kiroImg.complete && kiroImg.naturalWidth){
+   ctx.save();
+   ctx.translate(bird.x+bird.w/2,bird.y+bird.h/2);
+   ctx.rotate(Math.max(-0.22,Math.min(0.38,bird.vy/900)));
+   const dw=64, dh=64;
+   ctx.drawImage(kiroImg,-dw/2,-dh/2,dw,dh);
+   ctx.restore();
+ }
+}
+function loop(now){
+ if(!running)return;
+ const dt=Math.min((now-last)/1000,.033);last=now;
+ update(dt);draw();
+ if(running)requestAnimationFrame(loop);
+}
+canvas.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
+window.addEventListener("keydown",e=>{
+ if(e.code==="Space" || e.key===" "){e.preventDefault();flap()}
+ if(e.code==="ArrowUp"){e.preventDefault();flap()}
+});
+startBtn.addEventListener("click",startGame);
+again.addEventListener("click",()=>{end.classList.remove("show");startGame()});
+reset();
+</script>
+</body>
+</html>
