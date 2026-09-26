@@ -2,39 +2,855 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Kiro Play 🎮</title>
+
 <link rel="icon" type="image/png" href="favicon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
-:root{--coral:#E35D5B;--arena:#F2C6A0;--hueso:#FBF6F1;--carbon:#333333}*{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:var(--hueso);color:var(--carbon);font-family:"Chakra Petch",sans-serif;overflow-x:hidden}body:before{content:"";position:fixed;width:320px;height:320px;background:var(--arena);border-radius:50%;top:-140px;right:-100px;opacity:.45;z-index:-1}body:after{content:"";position:fixed;width:260px;height:260px;background:var(--coral);border-radius:50%;bottom:-130px;left:-100px;opacity:.12;z-index:-1}header{background:var(--coral);color:var(--hueso);text-align:center;padding:38px 20px 42px;border-bottom-left-radius:35px;border-bottom-right-radius:35px;box-shadow:0 8px 0 var(--carbon)}.mini-title{font-family:"Press Start 2P";font-size:11px;letter-spacing:1px;margin-bottom:18px}h1{font-family:"Press Start 2P";font-size:clamp(26px,7vw,48px);line-height:1.4;text-shadow:4px 4px 0 var(--carbon)}.subtitle{margin-top:18px;font-size:21px;font-weight:700}.intro{width:min(780px,92%);margin:30px auto 0;background:var(--hueso);color:var(--carbon);border:3px solid var(--carbon);border-radius:20px;padding:22px;box-shadow:6px 6px 0 var(--carbon)}.intro-title{font-family:"Press Start 2P";font-size:12px;line-height:1.8;margin-bottom:10px}.intro p{font-size:18px;line-height:1.45}.coupon-cta{display:inline-block;margin-top:18px;padding:13px 20px;border:3px solid var(--carbon);border-radius:13px;background:var(--coral);color:var(--hueso);font-size:17px;font-weight:700;text-decoration:none;box-shadow:4px 4px 0 var(--carbon)}.coupon-cta:hover{background:var(--arena);color:var(--carbon)}main{width:min(1100px,92%);margin:45px auto}.section-title{text-align:center;font-family:"Press Start 2P";font-size:15px;line-height:1.7;margin-bottom:30px}.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:22px}.game-card{background:var(--hueso);border:3px solid var(--carbon);border-radius:22px;padding:23px 18px 20px;text-align:center;box-shadow:7px 7px 0 var(--arena);transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column;min-height:330px}.game-card:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--coral)}.game-icon{font-size:50px;line-height:1;margin-bottom:14px}.game-card h2{font-size:22px;margin-bottom:8px;min-height:31px;display:flex;align-items:center;justify-content:center}.game-card p{font-size:16px;line-height:1.4;min-height:67px;margin-bottom:18px}.play-button{display:inline-block;width:100%;padding:13px 16px;margin-top:auto;border:3px solid var(--carbon);border-radius:13px;background:var(--coral);color:var(--hueso);font-size:17px;font-weight:700;text-decoration:none;box-shadow:4px 4px 0 var(--carbon)}.play-button:hover{background:var(--arena);color:var(--carbon)}.coming-soon{background:var(--arena);color:var(--carbon)}.help-link{display:block;margin:0 auto 28px;color:var(--carbon);font-size:18px;font-weight:700;text-decoration:underline;text-underline-offset:4px;cursor:pointer;background:none;border:0;font-family:"Chakra Petch"}.help-link:hover{color:var(--coral)}footer{text-align:center;padding:35px 20px 45px;font-size:15px}.store-link{display:inline-block;margin-top:12px;color:var(--coral);font-weight:700;text-decoration:none}.store-link:hover{text-decoration:underline}.modal-backdrop{position:fixed;inset:0;background:rgba(51,51,51,.68);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--hueso);border:4px solid var(--carbon);border-radius:22px;box-shadow:9px 9px 0 var(--carbon);padding:26px 23px 22px;position:relative}.modal h2{font-family:"Press Start 2P";font-size:14px;line-height:1.8;padding-right:35px;margin-bottom:18px}.modal-step{display:flex;gap:12px;align-items:flex-start;margin:13px 0;font-size:17px;line-height:1.4}.step-number{flex:0 0 31px;height:31px;display:grid;place-items:center;border:2px solid var(--carbon);border-radius:9px;background:var(--coral);color:var(--hueso);font-weight:700}.modal-note{margin-top:18px;padding:13px;border:2px dashed var(--carbon);border-radius:12px;background:var(--arena);font-size:15px;line-height:1.4}.close-modal{position:absolute;top:14px;right:14px;width:38px;height:38px;border:3px solid var(--carbon);border-radius:10px;background:var(--coral);color:var(--hueso);font-size:22px;font-weight:700;cursor:pointer}@media(max-width:600px){header{padding:32px 18px 38px}.subtitle{font-size:18px}.intro{margin-top:25px}.intro p{font-size:17px}main{margin:35px auto}.games{grid-template-columns:1fr}.game-card{padding:23px 18px 20px;min-height:315px}.modal{padding:24px 18px 20px}}
+
+:root{
+  --coral:#E35D5B;
+  --sand:#F2C6A0;
+  --cream:#FBF6F1;
+  --charcoal:#333333;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--charcoal);
+  font-family:'Chakra Petch',sans-serif;
+}
+
+.page{
+  width:min(1180px,100%);
+  margin:auto;
+  padding:0 16px 36px;
+}
+
+/* HERO */
+
+.hero{
+  background:var(--coral);
+  border:4px solid var(--charcoal);
+  border-top:0;
+  border-radius:0 0 30px 30px;
+  box-shadow:7px 7px 0 var(--charcoal);
+  padding:30px 20px 25px;
+  text-align:center;
+}
+
+.title{
+  margin:0;
+  color:#fff;
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(25px,6vw,42px);
+  line-height:1.45;
+  text-shadow:4px 4px 0 var(--charcoal);
+}
+
+.subtitle{
+  margin:12px 0 0;
+  color:#fff;
+  font-size:21px;
+  font-weight:700;
+}
+
+/* CUPONES */
+
+.intro{
+  margin:25px auto 18px;
+  max-width:850px;
+  background:#fff;
+  border:4px solid var(--charcoal);
+  border-radius:22px;
+  box-shadow:6px 6px 0 var(--sand);
+  padding:22px 20px;
+  text-align:center;
+}
+
+.intro p{
+  margin:0 0 15px;
+  font-size:20px;
+  line-height:1.4;
+  font-weight:600;
+}
+
+.coupon-button{
+  display:inline-block;
+  background:var(--coral);
+  color:#fff;
+  border:3px solid var(--charcoal);
+  border-radius:14px;
+  padding:13px 18px;
+  font-weight:700;
+  text-decoration:none;
+  box-shadow:4px 4px 0 var(--charcoal);
+}
+
+.coupon-button:active{
+  transform:translate(2px,2px);
+  box-shadow:2px 2px 0 var(--charcoal);
+}
+
+.how{
+  display:inline-block;
+  margin-top:14px;
+  color:var(--charcoal);
+  font-weight:700;
+  text-decoration:underline;
+  cursor:pointer;
+  background:none;
+  border:0;
+  font:inherit;
+}
+
+/* CATEGORÍAS */
+
+.category{
+  margin-top:30px;
+}
+
+.category-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 13px;
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(14px,3vw,19px);
+  line-height:1.5;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+/* TARJETAS */
+
+.card{
+  background:#fff;
+  border:3px solid var(--charcoal);
+  border-radius:17px;
+  padding:14px;
+  box-shadow:5px 5px 0 var(--sand);
+  display:flex;
+  flex-direction:column;
+  min-height:155px;
+}
+
+.card h3{
+  margin:0 0 9px;
+  font-size:20px;
+  line-height:1.15;
+}
+
+.card p{
+  margin:0 0 13px;
+  font-size:14px;
+  line-height:1.25;
+  flex:1;
+}
+
+.play-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  background:var(--coral);
+  color:#fff;
+  border:3px solid var(--charcoal);
+  border-radius:11px;
+  text-decoration:none;
+  font-weight:700;
+  box-shadow:3px 3px 0 var(--charcoal);
+}
+
+.play-button:active{
+  transform:translate(2px,2px);
+  box-shadow:1px 1px 0 var(--charcoal);
+}
+
+/* FOOTER */
+
+footer{
+  margin-top:35px;
+  text-align:center;
+  font-weight:700;
+}
+
+footer a{
+  color:var(--charcoal);
+}
+
+/* POPUP */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(51,51,51,.68);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:20;
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:min(500px,100%);
+  background:var(--cream);
+  border:4px solid var(--charcoal);
+  border-radius:22px;
+  box-shadow:8px 8px 0 var(--charcoal);
+  padding:25px 20px;
+  text-align:center;
+}
+
+.modal h2{
+  margin:0 0 15px;
+  font-family:'Press Start 2P',monospace;
+  font-size:18px;
+  line-height:1.6;
+}
+
+.modal p{
+  margin:0 0 18px;
+  font-size:17px;
+  line-height:1.45;
+  font-weight:600;
+}
+
+.close{
+  background:var(--coral);
+  color:#fff;
+  border:3px solid var(--charcoal);
+  border-radius:12px;
+  padding:11px 20px;
+  font:700 16px 'Chakra Petch',sans-serif;
+  box-shadow:3px 3px 0 var(--charcoal);
+  cursor:pointer;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .games{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:560px){
+
+  .page{
+    padding:0 10px 28px;
+  }
+
+  .hero{
+    padding:25px 12px 21px;
+  }
+
+  .intro{
+    padding:19px 14px;
+  }
+
+  .intro p{
+    font-size:17px;
+  }
+
+  .games{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .card{
+    padding:11px;
+    min-height:145px;
+  }
+
+  .card h3{
+    font-size:16px;
+  }
+
+  .card p{
+    font-size:13px;
+  }
+
+  .play-button{
+    min-height:42px;
+    font-size:15px;
+  }
+
+}
+
 </style>
 </head>
+
 <body>
-<header><div class="mini-title">BIENVENIDO A</div><h1>KIRO PLAY 🎮</h1><div class="subtitle">Jugá mientras esperás 💗</div><div class="intro"><div class="intro-title">🎟️ JUGÁ · CONSEGUÍ · DISFRUTÁ</div><p>Jugando en Kiro Play podés conseguir <strong>cupones de descuento</strong> para tus compras en la librería.</p><a class="coupon-cta" href="https://somoskiro.com.ar" target="_blank" rel="noopener">🎟️ QUIERO USAR MI CUPÓN</a></div></header>
-<main><button class="help-link" id="openHelp">❓ ¿Cómo uso mi cupón?</button><div class="section-title">ELEGÍ TU JUEGO</div><section class="games">
-<article class="game-card"><div class="game-icon">🕹️</div><h2>Misión Mostrador</h2><p>Sobreviví al caos del mostrador.</p><a class="play-button" href="mision-mostrador/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">🏎️</div><h2>Kiro Cross</h2><p>Cruzá la calle, esquivá los autos y superá tu récord.</p><a class="play-button" href="Kiro-Cross/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">💣</div><h2>Kiro Buscaminas</h2><p>Encontrá todas las casillas seguras y evitá las minas.</p><a class="play-button" href="Kiro-Buscaminas/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">🐍</div><h2>Kiro Viborita</h2><p>Comé, crecé y no choques contra las paredes.</p><a class="play-button" href="Kiro-Viborita/index.html">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">💥</div><h2>Kiro Whack</h2><p>¡Tocá los Kiros antes de que desaparezcan!</p><a class="play-button" href="Kiro-Whack/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">🧱</div><h2>Kiro Stack</h2><p>Apilá bloques con precisión y construí la torre más alta.</p><a class="play-button" href="Kiro-Stack/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">🪽</div><h2>Kiro Flappy</h2><p>Volá entre los obstáculos sin chocar.</p><a class="play-button" href="Kiro-Flappy/">JUGAR</a></article>
-<article class="game-card"><div class="game-icon">🦖</div><h2>Kiro Dino</h2><p>Corré, saltá y esquivá. ¿Hasta dónde llegás?</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🏓</div><h2>Kiro Pong</h2><p>Devolvé la pelota y ganale al rival.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">💣</div><h2>Kiro No Toques</h2><p>Tocá lo indicado y evitá las bombas.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">☄️</div><h2>Kiro Asteroids</h2><p>Esquivá y destruí meteoritos en el espacio.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🚗</div><h2>Kiro Parking</h2><p>Llevá el auto al lugar indicado sin chocar.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">⬆️</div><h2>Kiro Jump</h2><p>Saltá de plataforma en plataforma y llegá cada vez más alto.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🎯</div><h2>Kiro Tiro</h2><p>Apuntá, acertá y sumá puntos.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🧱</div><h2>Kiro Breakout</h2><p>Rompé todos los bloques y no dejes caer la pelota.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🔎</div><h2>Encontrá a Kiro</h2><p>Encontrá a Kiro escondido entre un montón de objetos.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">👾</div><h2>Kiro-Man</h2><p>Recorré el laberinto, comé puntos y esquivá enemigos.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-<article class="game-card"><div class="game-icon">🏃</div><h2>Kiro Run</h2><p>Corré, saltá y superá todos los obstáculos.</p><div class="play-button coming-soon">PRÓXIMAMENTE</div></article>
-</section></main>
-<footer><div>Hecho con 💗 por Kiro</div><a class="store-link" href="https://somoskiro.com.ar" target="_blank" rel="noopener">🛍️ Visitar Kiro</a></footer>
-<div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><button class="close-modal" id="closeHelp" aria-label="Cerrar">×</button><h2 id="modalTitle">🎟️ ¿CÓMO USO MI CUPÓN?</h2><div class="modal-step"><span class="step-number">1</span><span>Elegí los productos que quieras comprar en la tienda Kiro.</span></div><div class="modal-step"><span class="step-number">2</span><span>Agregalos al carrito y comenzá el proceso de compra.</span></div><div class="modal-step"><span class="step-number">3</span><span>En el checkout, buscá el campo <strong>“Código de descuento”</strong>.</span></div><div class="modal-step"><span class="step-number">4</span><span>Ingresá el código que desbloqueaste jugando en Kiro Play.</span></div><div class="modal-step"><span class="step-number">5</span><span>Tocá <strong>Aplicar</strong> y verificá que el descuento se haya aplicado.</span></div><div class="modal-note">💗 ¡Listo! Ahora podés terminar tu compra usando el descuento que ganaste jugando.</div></div></div>
-<script>const modal=document.getElementById("helpModal"),openHelp=document.getElementById("openHelp"),closeHelp=document.getElementById("closeHelp");openHelp.addEventListener("click",()=>modal.classList.add("open"));closeHelp.addEventListener("click",()=>modal.classList.remove("open"));modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});document.addEventListener("keydown",e=>{if(e.key==="Escape")modal.classList.remove("open")});</script>
-</body></html>
+
+<div class="page">
+
+<!-- HERO -->
+
+<header class="hero">
+
+  <h1 class="title">KIRO PLAY 🎮</h1>
+
+  <p class="subtitle">
+    Jugá mientras esperás 💗
+  </p>
+
+</header>
+
+
+<!-- CUPONES -->
+
+<section class="intro">
+
+  <p>
+    Jugando en Kiro Play conseguís descuentos para tus compras en la librería. 🎟️
+  </p>
+
+  <a
+    class="coupon-button"
+    href="https://somoskiro.com.ar/"
+  >
+    🎟️ QUIERO USAR MI CUPÓN
+  </a>
+
+  <br>
+
+  <button
+    class="how"
+    id="howBtn"
+  >
+    ❓ ¿Cómo uso mi cupón?
+  </button>
+
+</section>
+
+
+<!-- 🕹️ ARCADE -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    🕹️ ARCADE
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>Misión Mostrador 🕹️</h3>
+      <p>
+        Atajá todo lo que cae y conseguí puntos.
+      </p>
+      <a
+        class="play-button"
+        href="mision-mostrador/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Flappy 🪽</h3>
+      <p>
+        Volá con Kiro y atravesá los obstáculos.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Flappy/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Viborita 🐍</h3>
+      <p>
+        Comé, crecé y no choques con vos mismo.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Viborita/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Asteroids ☄️</h3>
+      <p>
+        Esquivá y destruí asteroides.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Asteroids/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- ⚽ DEPORTES -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    ⚽ DEPORTES
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>Kiro Penales ⚽</h3>
+      <p>
+        Elegí el tiro y tratá de convertir.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Penales/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Bowling 🎳</h3>
+      <p>
+        Derribá todos los bolos.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Bowling/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Basket 🏀</h3>
+      <p>
+        Apuntá y encestá.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Basket/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Pong 🏓</h3>
+      <p>
+        Devolvé la pelota y mantené el rebote.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Pong/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- 🧠 MENTE -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    🧠 MENTE
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>Kiro Memoria 🧠</h3>
+      <p>
+        Encontrá las parejas de Kiro.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Memoria/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Buscaminas 💣</h3>
+      <p>
+        Descubrí las casillas sin pisar una mina.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Buscaminas/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Encontrá a Kiro 🔎</h3>
+      <p>
+        ¿Dónde se escondió Kiro?
+      </p>
+      <a
+        class="play-button"
+        href="Encontra-a-Kiro/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro-Man 👾</h3>
+      <p>
+        Recorré el laberinto y superá el desafío.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Man/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- 🎯 PRECISIÓN -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    🎯 PRECISIÓN
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>Kiro Tiro 🎯</h3>
+      <p>
+        Apuntá y acertá en el blanco.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Tiro/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Golf ⛳</h3>
+      <p>
+        Calculá fuerza y dirección para embocar.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Golf/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Stack 🧱</h3>
+      <p>
+        Apilá los libros sin perder el equilibrio.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Stack/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Breakout 🧱</h3>
+      <p>
+        Rompé los bloques y mantené la pelota en juego.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Breakout/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- ⚡ REFLEJOS -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    ⚡ REFLEJOS
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>Kiro Whack 💥</h3>
+      <p>
+        Tocá a Kiro antes de que se esconda.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Whack/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Cross 🏎️</h3>
+      <p>
+        Cruzá la calle sin que te agarre el tránsito.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Cross/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Dino 🦖</h3>
+      <p>
+        Saltá y esquivá dinosaurios.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Dino/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Jump ⬆️</h3>
+      <p>
+        Saltá cada obstáculo y llegá cada vez más lejos.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Jump/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- 🧩 DESAFÍO -->
+
+<section class="category">
+
+  <h2 class="category-title">
+    🧩 DESAFÍO
+  </h2>
+
+  <div class="games">
+
+    <article class="card">
+      <h3>No Toques 💣</h3>
+      <p>
+        Movete con cuidado y evitá tocar lo prohibido.
+      </p>
+      <a
+        class="play-button"
+        href="No-Toques/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Parking 🚗</h3>
+      <p>
+        Estacioná a Kiro sin chocar.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Parking/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Run 🏃</h3>
+      <p>
+        Corré, esquivá y superá tu récord.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Run/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+
+    <article class="card">
+      <h3>Kiro Surf 🏄</h3>
+      <p>
+        Mantené el equilibrio y superá las olas.
+      </p>
+      <a
+        class="play-button"
+        href="Kiro-Surf/"
+      >
+        JUGAR
+      </a>
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+  <p>
+    Hecho con 💗 por Kiro
+  </p>
+
+  <a href="https://somoskiro.com.ar/">
+    🛍️ Visitar Kiro
+  </a>
+
+</footer>
+
+</div>
+
+
+<!-- POPUP CUPÓN -->
+
+<div
+  class="overlay"
+  id="overlay"
+>
+
+  <div class="modal">
+
+    <h2>
+      ❓ ¿Cómo uso mi cupón?
+    </h2>
+
+    <p>
+      Cuando ganes un cupón en Kiro Play,
+      copiá el código y usalo al hacer tu
+      compra en nuestra tienda online. 🎟️
+    </p>
+
+    <p>
+      Ingresalo en el campo de cupón/descuento
+      durante el proceso de compra.
+    </p>
+
+    <button
+      class="close"
+      id="closeBtn"
+    >
+      LISTO 💗
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const overlay =
+  document.getElementById('overlay');
+
+document
+  .getElementById('howBtn')
+  .addEventListener(
+    'click',
+    () => overlay.classList.add('show')
+  );
+
+document
+  .getElementById('closeBtn')
+  .addEventListener(
+    'click',
+    () => overlay.classList.remove('show')
+  );
+
+overlay.addEventListener(
+  'click',
+  e => {
+    if(e.target === overlay){
+      overlay.classList.remove('show');
+    }
+  }
+);
+
+</script>
+
+</body>
+</html>
