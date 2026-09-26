@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Kiro Dino 🦖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#E35D5B;--sand:#F2C6A0;--cream:#FBF6F1;--charcoal:#333;--sky:#dff4ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--charcoal);font-family:'Chakra Petch',sans-serif}
+body{display:flex;justify-content:center;padding:0 12px 28px;overflow-x:hidden}
+.game{width:min(900px,100%)}
+.hero{margin:0 -12px 14px;background:var(--coral);border-bottom:6px solid var(--charcoal);border-radius:0 0 34px 34px;padding:22px 16px 17px;text-align:center;box-shadow:0 5px 0 rgba(51,51,51,.15)}
+.title{font-family:'Press Start 2P',monospace;font-size:clamp(21px,5vw,34px);line-height:1.4;margin:3px 0;color:#fff;text-shadow:3px 3px 0 var(--charcoal)}
+.subtitle{font-size:17px;font-weight:700;color:#fff;margin:7px 0 0}
+.hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+.hudbox{background:#fff;border:3px solid var(--charcoal);border-radius:14px;padding:9px 6px;text-align:center;box-shadow:4px 4px 0 var(--sand);min-height:62px}
+.hudlabel{display:block;font-size:12px;font-weight:700;text-transform:uppercase}
+.hudvalue{display:block;font-family:'Press Start 2P',monospace;font-size:12px;margin-top:7px}
+.board-wrap{background:#fff;border:4px solid var(--charcoal);border-radius:20px;padding:10px;box-shadow:6px 6px 0 var(--sand);position:relative}
+canvas{display:block;width:100%;height:auto;background:linear-gradient(#dff4ff 0%,#eefaff 72%,#f4d0ac 72%,#f4d0ac 100%);border:3px solid var(--charcoal);border-radius:14px;touch-action:none}
+.controls{display:flex;gap:10px;margin-top:12px}
+button{font:700 16px 'Chakra Petch',sans-serif;border:3px solid var(--charcoal);border-radius:13px;background:var(--coral);color:#fff;padding:12px 15px;box-shadow:4px 4px 0 var(--charcoal);cursor:pointer;touch-action:manipulation}
+button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--charcoal)}
+.controls button{flex:1}
+.tip{text-align:center;font-size:13px;font-weight:600;line-height:1.45;margin:11px 2px 2px}
+.touch-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.touch-controls button{font-size:18px;padding:14px 10px}
+.overlay{position:absolute;inset:10px;background:rgba(251,246,241,.96);border-radius:16px;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:5}
+.overlay.show{display:flex}
+.modal{max-width:420px}
+.modal img{width:128px;height:128px;object-fit:contain}
+.modal h2{font-family:'Press Start 2P',monospace;font-size:20px;line-height:1.5;margin:3px 0 10px}
+.modal p{font-size:17px;font-weight:600;line-height:1.4;margin:8px 0 15px}
+.badge{display:inline-block;background:var(--sand);border:3px solid var(--charcoal);border-radius:999px;padding:7px 13px;font-family:'Press Start 2P',monospace;font-size:10px}
+@media(min-width:700px){.touch-controls{max-width:520px;margin:10px auto 0}}
+</style>
+</head>
+<body>
+<main class="game">
+<header class="hero">
+  <h1 class="title">KIRO DINO 🦖</h1>
+  <p class="subtitle">Saltá, agachate y corré lo más lejos que puedas.</p>
+</header>
+
+<section class="hud">
+  <div class="hudbox"><span class="hudlabel">Vidas</span><span id="lives" class="hudvalue">❤️❤️❤️</span></div>
+  <div class="hudbox"><span class="hudlabel">Puntos</span><span id="score" class="hudvalue">0000</span></div>
+  <div class="hudbox"><span class="hudlabel">Récord</span><span id="best" class="hudvalue">0000</span></div>
+</section>
+
+<section class="board-wrap" id="wrap">
+  <canvas id="game" width="900" height="320" aria-label="Kiro Dino"></canvas>
+
+  <div class="touch-controls">
+    <button id="jumpBtn">⬆️ SALTAR</button>
+    <button id="duckBtn">⬇️ AGACHARSE</button>
+  </div>
+
+  <p class="tip">📱 Tocá SALTAR o deslizá hacia arriba · Mantené AGACHARSE o deslizá hacia abajo · 🖥️ Espacio/↑ y ↓</p>
+
+  <div class="controls">
+    <button id="pauseBtn">PAUSAR</button>
+    <button id="restartBtn">REINICIAR</button>
+  </div>
+
+  <div id="overlay" class="overlay show">
+    <div class="modal">
+      <img id="overlayImg" src="Correr1.webp" alt="Kiro Dino">
+      <h2 id="overlayTitle">KIRO DINO 🦖</h2>
+      <p id="overlayText">Saltá los cactus y agachate para pasar debajo de los pterodáctilos.</p>
+      <span id="badge" class="badge">LISTO PARA JUGAR</span>
+      <div class="controls"><button id="overlayBtn">▶ JUGAR</button></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+
+const imgs={
+  run1:load('Correr1.webp'),
+  run2:load('correr 2.png'),
+  jump:load('saltar.webp'),
+  duck:load('Agachadito.webp'),
+  hit:load('Golpe.webp')
+};
+function load(src){const i=new Image();i.src=src;return i}
+
+const livesEl=document.getElementById('lives');
+const scoreEl=document.getElementById('score');
+const bestEl=document.getElementById('best');
+const overlay=document.getElementById('overlay');
+const overlayImg=document.getElementById('overlayImg');
+const overlayTitle=document.getElementById('overlayTitle');
+const overlayText=document.getElementById('overlayText');
+const badge=document.getElementById('badge');
+const overlayBtn=document.getElementById('overlayBtn');
+const pauseBtn=document.getElementById('pauseBtn');
+const restartBtn=document.getElementById('restartBtn');
+const jumpBtn=document.getElementById('jumpBtn');
+const duckBtn=document.getElementById('duckBtn');
+
+const GROUND=250;
+const GRAVITY=1850;
+const JUMP=-690;
+let running=false,paused=false,gameOver=false,started=false;
+let lives=3,score=0,best=Number(localStorage.getItem('kiroDinoBest')||0);
+let speed=330,spawnTimer=0,spawnGap=1.35,elapsed=0;
+let last=0,raf=0;
+let obstacles=[];
+let clouds=[];
+let hitFlash=0;
+let runFrame=0,runTimer=0;
+let ducking=false;
+let dino={x:115,y:GROUND,w:92,h:92,vy:0,onGround:true};
+
+bestEl.textContent=String(best).padStart(4,'0');
+
+function setHud(){
+  livesEl.textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);
+  scoreEl.textContent=String(Math.floor(score)).padStart(4,'0');
+  bestEl.textContent=String(Math.max(best,Math.floor(score))).padStart(4,'0');
+}
+
+function resetPlayer(){
+  dino={x:115,y:GROUND,w:92,h:92,vy:0,onGround:true};
+  ducking=false;
+}
+
+function resetWorld(){
+  obstacles=[];
+  clouds=[
+    {x:170,y:62,s:1},{x:490,y:90,s:.75},{x:760,y:48,s:1.15}
+  ];
+  spawnTimer=.9;
+  spawnGap=1.35;
+  speed=330;
+  elapsed=0;
+  score=0;
+  lives=3;
+  hitFlash=0;
+  resetPlayer();
+  setHud();
+}
+
+function start(){
+  cancelAnimationFrame(raf);
+  resetWorld();
+  running=true;paused=false;gameOver=false;started=true;
+  overlay.classList.remove('show');
+  pauseBtn.textContent='PAUSAR';
+  last=performance.now();
+  raf=requestAnimationFrame(loop);
+}
+
+function jump(){
+  if(!running||paused||gameOver)return;
+  if(dino.onGround){
+    dino.vy=JUMP;
+    dino.onGround=false;
+    ducking=false;
+  }
+}
+
+function setDuck(v){
+  if(!running||paused||gameOver)return;
+  ducking=v && dino.onGround===true;
+}
+
+function addObstacle(){
+  const canPtero=score>120;
+  const isPtero=canPtero && Math.random()<0.38;
+  if(isPtero){
+    obstacles.push({
+      type:'ptero',
+      x:canvas.width+30,
+      // Los pterodáctilos vuelan a la altura que se supera saltando.
+      // No quedan al alcance del agacharse: están bastante más arriba.
+      y:GROUND-(Math.random()<0.55?105:120),
+      w:82,h:52,
+      phase:Math.random()*Math.PI*2,
+      low: Math.random()<0.72
+    });
+  }else{
+    const tall=Math.random()<0.22;
+    obstacles.push({
+      type:'cactus',
+      x:canvas.width+30,
+      y:GROUND-(tall?82:60),
+      w:tall?38:30,
+      h:tall?82:60,
+      variant:Math.random()
+    });
+  }
+}
+
+function jumpOrDuckHeight(){
+  return ducking?54:92;
+}
+
+function playerBox(){
+  const h=jumpOrDuckHeight();
+  const w=ducking?96:78;
+  return {x:dino.x+10,y:dino.y-h+10,w,h:h-18};
+}
+
+function obstacleBox(o){
+  if(o.type==='ptero') return {x:o.x+8,y:o.y+8,w:o.w-16,h:o.h-14};
+  return {x:o.x+7,y:o.y+5,w:o.w-12,h:o.h-8};
+}
+
+function overlaps(a,b){
+  return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y;
+}
+
+function collide(){
+  const p=playerBox();
+  return obstacles.some(o=>overlaps(p,obstacleBox(o)));
+}
+
+function loseLife(){
+  lives--;
+  hitFlash=.55;
+  running=false;
+  clearTimeoutSafe();
+  if(score>best){best=Math.floor(score);localStorage.setItem('kiroDinoBest',best)}
+  setHud();
+
+  overlay.classList.add('show');
+  overlayImg.src='Golpe.webp';
+  overlayTitle.textContent=lives>0?'¡CHOQUE!':'GAME OVER';
+  overlayText.textContent=lives>0?'Kiro se dio un golpazo. ¡Todavía quedan vidas!':'Kiro chocó demasiado. ¡Probá de nuevo!';
+  badge.textContent=String(Math.floor(score)).padStart(4,'0')+' PUNTOS';
+  overlayBtn.textContent=lives>0?'SEGUIR':'REVANCHA';
+  gameOver=lives<=0;
+}
+
+function clearTimeoutSafe(){}
+
+function continueAfterHit(){
+  if(lives<=0){start();return}
+  obstacles=obstacles.filter(o=>o.x>canvas.width+20);
+  resetPlayer();
+  running=true;
+  paused=false;
+  overlay.classList.remove('show');
+  pauseBtn.textContent='PAUSAR';
+  last=performance.now();
+  raf=requestAnimationFrame(loop);
+}
+
+function togglePause(){
+  if(!started||gameOver||(!running&&!paused))return;
+  paused=!paused;
+  if(paused){
+    running=false;
+    pauseBtn.textContent='CONTINUAR';
+    overlayImg.src='Correr1.webp';
+    overlayTitle.textContent='PAUSA';
+    overlayText.textContent='Tranqui, Kiro se queda quietito. 😌';
+    badge.textContent='PUNTAJE '+String(Math.floor(score)).padStart(4,'0');
+    overlayBtn.textContent='▶ CONTINUAR';
+    overlay.classList.add('show');
+  }else{
+    running=true;
+    overlay.classList.remove('show');
+    pauseBtn.textContent='PAUSAR';
+    last=performance.now();
+    raf=requestAnimationFrame(loop);
+  }
+}
+
+overlayBtn.onclick=()=>{
+  if(!started){start();return}
+  if(paused){togglePause();return}
+  if(lives>0){continueAfterHit();return}
+  start();
+};
+restartBtn.onclick=start;
+pauseBtn.onclick=togglePause;
+
+jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();jump()});
+duckBtn.addEventListener('pointerdown',e=>{e.preventDefault();setDuck(true)});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>duckBtn.addEventListener(ev,()=>setDuck(false)));
+
+canvas.addEventListener('pointerdown',e=>{
+  if(!running||paused||gameOver)return;
+  jump();
+});
+canvas.addEventListener('touchstart',e=>{
+  const t=e.changedTouches[0];
+  canvas._touch={x:t.clientX,y:t.clientY};
+},{passive:true});
+canvas.addEventListener('touchend',e=>{
+  const s=canvas._touch;if(!s)return;
+  const t=e.changedTouches[0];
+  const dx=t.clientX-s.x,dy=t.clientY-s.y;
+  canvas._touch=null;
+  if(Math.abs(dy)>35&&dy>0){setDuck(true);setTimeout(()=>setDuck(false),260)}
+  else if(Math.abs(dy)>35&&dy<0)jump();
+  else if(Math.max(Math.abs(dx),Math.abs(dy))<25)jump();
+},{passive:true});
+
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(k===' '||k==='arrowup'){e.preventDefault();jump()}
+  if(k==='arrowdown'){e.preventDefault();setDuck(true)}
+  if(k==='p'){togglePause()}
+});
+document.addEventListener('keyup',e=>{
+  if(e.key.toLowerCase()==='arrowdown')setDuck(false);
+});
+
+function drawBackground(dt){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // subtle clouds
+  clouds.forEach(c=>{
+    c.x-=speed*0.045*dt;
+    if(c.x<-90)c.x=canvas.width+Math.random()*120;
+    ctx.save();
+    ctx.globalAlpha=.55;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.arc(c.x,c.y,18*c.s,0,Math.PI*2);
+    ctx.arc(c.x+20*c.s,c.y-5*c.s,24*c.s,0,Math.PI*2);
+    ctx.arc(c.x+45*c.s,c.y,17*c.s,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // ground line
+  ctx.strokeStyle='#333';
+  ctx.lineWidth=4;
+  ctx.beginPath();
+  ctx.moveTo(0,GROUND+2);
+  ctx.lineTo(canvas.width,GROUND+2);
+  ctx.stroke();
+
+  // small ground marks
+  ctx.lineWidth=3;
+  ctx.strokeStyle='#d59e79';
+  const offset=(elapsed*speed)%90;
+  for(let x=-offset;x<canvas.width;x+=90){
+    ctx.beginPath();ctx.moveTo(x,GROUND+18);ctx.lineTo(x+24,GROUND+18);ctx.stroke();
+  }
+}
+
+function drawCactus(o){
+  ctx.save();
+  ctx.fillStyle='#5ca66a';
+  ctx.strokeStyle='#333';
+  ctx.lineWidth=4;
+  const x=o.x,y=o.y,w=o.w,h=o.h;
+  ctx.beginPath();
+  ctx.roundRect(x+w*.32,y,w*.36,h,12);
+  ctx.roundRect(x,y+h*.36,w*.38,h*.13,8);
+  ctx.roundRect(x+w*.62,y+h*.2,w*.38,h*.13,8);
+  ctx.fill();ctx.stroke();
+  ctx.restore();
+}
+
+function drawPtero(o){
+  ctx.save();
+  ctx.fillStyle='#E35D5B';
+  ctx.strokeStyle='#333';
+  ctx.lineWidth=4;
+  const flap=Math.sin(elapsed*12+o.phase)*8;
+  const x=o.x,y=o.y;
+  ctx.beginPath();
+  ctx.moveTo(x+36,y+25);
+  ctx.quadraticCurveTo(x+14,y+flap,x+2,y+5);
+  ctx.quadraticCurveTo(x+18,y+4,x+38,y+18);
+  ctx.quadraticCurveTo(x+54,y+flap,x+74,y+5);
+  ctx.quadraticCurveTo(x+62,y+27,x+42,y+29);
+  ctx.lineTo(x+56,y+43);
+  ctx.lineTo(x+39,y+32);
+  ctx.lineTo(x+27,y+43);
+  ctx.closePath();
+  ctx.fill();ctx.stroke();
+  ctx.fillStyle='#fff';
+  ctx.beginPath();ctx.arc(x+31,y+25,3,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function drawObstacle(o){
+  if(o.type==='ptero')drawPtero(o);else drawCactus(o);
+}
+
+function drawDino(){
+  let img;
+  if(hitFlash>0)img=imgs.hit;
+  else if(!dino.onGround)img=imgs.jump;
+  else if(ducking)img=imgs.duck;
+  else img=(runFrame===0?imgs.run1:imgs.run2);
+
+  const h=ducking?70:92;
+  const w=ducking?110:92;
+  // dino.y is the bottom/feet position; during a jump it moves upward.
+  const y=dino.y-h+9;
+  if(!dino.onGround){
+    const lift=Math.max(0,GROUND-dino.y);
+    ctx.save();
+    ctx.globalAlpha=Math.max(.12,.28-lift/700);
+    ctx.fillStyle='#333';
+    ctx.beginPath();
+    ctx.ellipse(dino.x+35,GROUND+8,38,7,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.drawImage(img,dino.x-w*.15,y,w,h);
+}
+
+function loop(now){
+  if(!running)return;
+  const dt=Math.min((now-last)/1000,.032);
+  last=now;
+  elapsed+=dt;
+  score+=dt*10;
+  speed=Math.min(680,330+score*0.72);
+  spawnGap=Math.max(.72,1.35-score/1200);
+  spawnTimer-=dt;
+  if(spawnTimer<=0){
+    addObstacle();
+    spawnTimer=spawnGap*(.78+Math.random()*.45);
+  }
+
+  if(!dino.onGround){
+    dino.vy+=GRAVITY*dt;
+    dino.y+=dino.vy*dt;
+    if(dino.y>=GROUND){dino.y=GROUND;dino.vy=0;dino.onGround=true}
+  }
+
+  if(!ducking&&dino.onGround===false){/* jump pose */}
+  obstacles.forEach(o=>o.x-=speed*dt);
+  obstacles=obstacles.filter(o=>o.x+o.w>-30);
+
+  runTimer+=dt;
+  if(runTimer>.13){runTimer=0;runFrame=1-runFrame}
+
+  if(hitFlash>0)hitFlash=Math.max(0,hitFlash-dt);
+
+  if(collide()){loseLife();draw();return}
+
+  setHud();
+  draw();
+  raf=requestAnimationFrame(loop);
+}
+
+function draw(){
+  drawBackground(0);
+  obstacles.forEach(drawObstacle);
+  drawDino();
+}
+
+resetWorld();
+draw();
+setHud();
+</script>
+</body>
+</html>
