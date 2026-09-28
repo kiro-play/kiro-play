@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Kiro Pong 🏓</title>
+<style>
+:root{--coral:#E35D5B;--sand:#F2C6A0;--cream:#FBF6F1;--charcoal:#333333}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--charcoal);font-family:'Trebuchet MS',Arial,sans-serif}
+body{display:flex;justify-content:center;touch-action:none}
+.game{width:min(520px,100%);padding:14px 14px 24px}
+h1{margin:3px 0 8px;text-align:center;font-size:30px;letter-spacing:.5px}
+.info{display:flex;justify-content:space-between;gap:8px;font-weight:800;margin-bottom:10px}
+.info span{background:#fff;border:3px solid var(--charcoal);border-radius:10px;padding:7px 8px;flex:1;text-align:center}
+#arena{position:relative;width:100%;height:min(78vh,700px);min-height:520px;background:var(--cream);border:4px solid var(--charcoal);border-radius:18px;overflow:hidden;box-shadow:6px 6px 0 var(--sand)}
+.midline{position:absolute;left:4%;right:4%;top:50%;border-top:3px dashed var(--sand)}
+.netdot{position:absolute;left:50%;top:50%;width:12px;height:12px;border:3px solid var(--charcoal);border-radius:50%;transform:translate(-50%,-50%);background:#fff}
+.paddle{position:absolute;width:116px;height:auto;z-index:2;user-select:none;-webkit-user-drag:none}
+#cpu{top:16px}
+#player{bottom:16px}
+#ball{position:absolute;width:30px;height:30px;object-fit:contain;z-index:3;user-select:none;-webkit-user-drag:none}
+#startBtn,#restartBtn{display:block;margin:16px auto 0;background:var(--coral);color:#fff;border:3px solid var(--charcoal);border-radius:12px;padding:12px 24px;font-size:18px;font-weight:800;box-shadow:4px 4px 0 var(--charcoal);cursor:pointer}
+#restartBtn{display:none}
+.help{text-align:center;font-weight:700;font-size:14px;margin:12px 0 0;line-height:1.4}
+.overlay{position:absolute;inset:0;background:rgba(251,246,241,.94);display:flex;align-items:center;justify-content:center;text-align:center;z-index:10}
+.overlay.hidden{display:none}
+.box{padding:24px}
+.box h2{font-size:27px;margin:0 0 10px}
+.box p{font-size:17px;margin:7px 0;font-weight:700}
+#result{font-weight:900;font-size:22px}
+@media(max-width:560px){
+ .game{padding:9px 10px 20px}
+ h1{font-size:25px}
+ #arena{height:calc(100vh - 185px);min-height:430px;max-height:700px}
+ .paddle{width:96px}
+ #ball{width:25px;height:25px}
+ .help{font-size:13px}
+}
+</style>
+</head>
+<body>
+<main class="game">
+<h1>🏓 KIRO PONG</h1>
+<div class="info">
+<span>⭐ Puntos: <b id="score">0</b></span>
+<span>❤️ Vidas: <b id="lives">3</b></span>
+<span>🏆 Récord: <b id="record">0</b></span>
+</div>
+
+<div id="arena">
+<div class="midline"></div><div class="netdot"></div>
+<img id="cpu" class="paddle" src="paddle-cpu.webp" alt="">
+<img id="player" class="paddle" src="paddle-player.webp" alt="">
+<img id="ball" src="ball.webp" alt="">
+
+<div id="overlay" class="overlay">
+<div class="box">
+<h2>🏓 Kiro Pong</h2>
+<p>Devolvé la pelota y no la dejes pasar.</p>
+<p>🖥️ PC: ← → o A D</p>
+<p>📱 Celular: arrastrá el dedo</p>
+<button id="startBtn">JUGAR</button>
+</div>
+</div>
+</div>
+
+<button id="restartBtn">🔄 REVANCHA</button>
+<p class="help">🔥 Cada 5 puntos la pelota acelera.</p>
+</main>
+
+<script>
+const arena=document.getElementById('arena');
+const player=document.getElementById('player');
+const cpu=document.getElementById('cpu');
+const ball=document.getElementById('ball');
+const overlay=document.getElementById('overlay');
+const startBtn=document.getElementById('startBtn');
+const restartBtn=document.getElementById('restartBtn');
+const scoreEl=document.getElementById('score');
+const livesEl=document.getElementById('lives');
+const recordEl=document.getElementById('record');
+
+let score=0,lives=3,playing=false,raf=0;
+let bx=0,by=0,vx=0,vy=0;
+let playerX=0,cpuX=0,lastTime=0,keys={},touchActive=false;
+let record=Number(localStorage.getItem('kiroPongRecord')||0);
+recordEl.textContent=record;
+
+function W(){return arena.clientWidth}
+function H(){return arena.clientHeight}
+function PW(){return player.offsetWidth}
+function BW(){return ball.offsetWidth}
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+
+function resetPositions(){
+ playerX=(W()-PW())/2;
+ cpuX=(W()-cpu.offsetWidth)/2;
+ bx=W()/2-BW()/2;
+ by=H()/2-BW()/2;
+ player.style.left=playerX+'px';
+ cpu.style.left=cpuX+'px';
+ ball.style.left=bx+'px';
+ ball.style.top=by+'px';
+}
+function launch(){
+ const speed=330;
+ const dir=Math.random()<.5?-1:1;
+ let angle=Math.random()*0.9-0.45;
+ vx=dir*speed;
+ vy=(Math.abs(angle)<0.25?0.25:Math.abs(angle))*speed*(Math.random()<.5?-1:1);
+}
+function start(){
+ score=0;lives=3;scoreEl.textContent=score;livesEl.textContent=lives;
+ restartBtn.style.display='none';
+ overlay.classList.add('hidden');
+ resetPositions();launch();playing=true;lastTime=performance.now();
+ cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
+}
+function gameOver(){
+ playing=false;cancelAnimationFrame(raf);
+ const box=overlay.querySelector('.box');
+ box.innerHTML='<h2>💥 ¡FIN DEL JUEGO!</h2><p id="result">Puntaje: '+score+'</p><p>🏆 Récord: '+record+'</p>';
+ overlay.classList.remove('hidden');restartBtn.style.display='block';
+}
+function loseLife(){
+ lives--;livesEl.textContent=lives;
+ if(lives<=0){gameOver();return}
+ resetPositions();launch();
+}
+function addPoint(){
+ score++;scoreEl.textContent=score;
+ if(score>record){record=score;localStorage.setItem('kiroPongRecord',record);recordEl.textContent=record}
+}
+function movePlayerTo(x){
+ playerX=clamp(x-PW()/2,4,W()-PW()-4);
+ player.style.left=playerX+'px';
+}
+arena.addEventListener('pointerdown',e=>{
+ if(!playing)return;touchActive=true;
+ movePlayerTo(e.clientX-arena.getBoundingClientRect().left);
+});
+arena.addEventListener('pointermove',e=>{
+ if(!playing||!touchActive)return;
+ movePlayerTo(e.clientX-arena.getBoundingClientRect().left);
+});
+window.addEventListener('pointerup',()=>touchActive=false);
+window.addEventListener('keydown',e=>{
+ keys[e.key.toLowerCase()]=true;
+ if(['arrowleft','arrowright','a','d',' '].includes(e.key.toLowerCase()))e.preventDefault();
+});
+window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+
+function loop(now){
+ if(!playing)return;
+ const dt=Math.min((now-lastTime)/1000,0.035);lastTime=now;
+ const paddleSpeed=520;
+ if(keys['arrowleft']||keys['a'])playerX-=paddleSpeed*dt;
+ if(keys['arrowright']||keys['d'])playerX+=paddleSpeed*dt;
+ playerX=clamp(playerX,4,W()-PW()-4);player.style.left=playerX+'px';
+
+ const cpuCenter=cpuX+cpu.offsetWidth/2,target=bx+BW()/2;
+ const cpuSpeed=250+Math.min(score*3,110);
+ if(target>cpuCenter+8)cpuX+=cpuSpeed*dt;
+ if(target<cpuCenter-8)cpuX-=cpuSpeed*dt;
+ cpuX=clamp(cpuX,4,W()-cpu.offsetWidth-4);cpu.style.left=cpuX+'px';
+
+ const level=Math.floor(score/5);
+ const targetSpeed=330*Math.pow(1.08,level);
+ const current=Math.hypot(vx,vy);
+ if(current>0 && current<targetSpeed){const f=targetSpeed/current;vx*=Math.min(f,1.012);vy*=Math.min(f,1.012)}
+
+ bx+=vx*dt;by+=vy*dt;
+ const b=BW(),pTop=H()-16-player.offsetHeight,pLeft=playerX,pRight=playerX+PW();
+ const cTop=16,cLeft=cpuX,cRight=cpuX+cpu.offsetWidth;
+
+ if(bx<=4){bx=4;vx=Math.abs(vx)}
+ if(bx+b>=W()-4){bx=W()-4-b;vx=-Math.abs(vx)}
+
+ if(vy<0&&by<=cTop+cpu.offsetHeight&&by+b>=cTop&&bx+b>=cLeft&&bx<=cRight){
+   by=cTop+cpu.offsetHeight+1;vy=Math.abs(vy);
+   const hit=(bx+b/2-(cLeft+cpu.offsetWidth/2))/(cpu.offsetWidth/2);vx+=hit*110;
+ }
+ if(vy>0&&by+b>=pTop&&by<=pTop+player.offsetHeight&&bx+b>=pLeft&&bx<=pRight){
+   by=pTop-b-1;vy=-Math.abs(vy);
+   const hit=(bx+b/2-(pLeft+PW()/2))/(PW()/2);vx+=hit*150;addPoint();
+ }
+ if(by+b<0){by=10;vy=Math.abs(vy);addPoint()}
+ if(by>H()){loseLife();if(!playing)return;raf=requestAnimationFrame(loop);return}
+
+ ball.style.left=bx+'px';ball.style.top=by+'px';
+ raf=requestAnimationFrame(loop);
+}
+startBtn.addEventListener('click',start);
+restartBtn.addEventListener('click',start);
+resetPositions();
+</script>
+</body>
+</html>
