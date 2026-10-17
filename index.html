@@ -32,33 +32,32 @@ body {
   overflow-x: hidden;
 }
 
-body:before {
-  content: "";
-  position: fixed;
-  width: 320px;
-  height: 320px;
-  background: var(--arena);
-  border-radius: 50%;
-  top: -140px;
-  right: -100px;
-  opacity: .2;
-  z-index: -1;
-}
-
+body:before,
 body:after {
   content: "";
   position: fixed;
+  border-radius: 50%;
+  z-index: -1;
+  opacity: .2;
+}
+
+body:before {
+  width: 320px;
+  height: 320px;
+  background: var(--arena);
+  top: -140px;
+  right: -100px;
+}
+
+body:after {
   width: 260px;
   height: 260px;
   background: var(--coral);
-  border-radius: 50%;
   bottom: -130px;
   left: -100px;
-  opacity: .2;
-  z-index: -1;
 }
 
-/* FANTASMITAS ANIMADOS */
+/* FANTASMITAS */
 .ghost-layer {
   position: fixed;
   inset: 0;
@@ -78,7 +77,6 @@ body:after {
   color: var(--gc, #fff8ee);
   animation: ghost-float var(--dur, 18s) linear var(--delay, 0s) infinite;
   filter: drop-shadow(0 0 7px rgba(255,255,255,.12));
-  will-change: transform, opacity;
 }
 
 .ghost svg {
@@ -92,28 +90,12 @@ body:after {
 }
 
 @keyframes ghost-float {
-  0% {
-    transform: translate(0,0) rotate(-8deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: var(--peak,.65);
-  }
-  38% {
-    transform: translate(25px,-36vh) rotate(7deg);
-    opacity: var(--peak,.65);
-  }
-  70% {
-    transform: translate(-18px,-72vh) rotate(-5deg);
-    opacity: var(--peak,.55);
-  }
-  90% {
-    opacity: .1;
-  }
-  100% {
-    transform: translate(10px,-115vh) rotate(8deg);
-    opacity: 0;
-  }
+  0% { transform: translate(0,0) rotate(-8deg); opacity: 0; }
+  10% { opacity: var(--peak,.65); }
+  38% { transform: translate(25px,-36vh) rotate(7deg); opacity: var(--peak,.65); }
+  70% { transform: translate(-18px,-72vh) rotate(-5deg); opacity: var(--peak,.55); }
+  90% { opacity: .1; }
+  100% { transform: translate(10px,-115vh) rotate(8deg); opacity: 0; }
 }
 
 .ghost.side {
@@ -121,26 +103,14 @@ body:after {
 }
 
 @keyframes ghost-side {
-  0% {
-    transform: translate(-12vw,0) rotate(-6deg);
-    opacity: 0;
-  }
-  12% {
-    opacity: var(--peak,.6);
-  }
-  50% {
-    transform: translate(70vw,-7vh) rotate(6deg);
-    opacity: var(--peak,.6);
-  }
-  88% {
-    opacity: .08;
-  }
-  100% {
-    transform: translate(115vw,4vh) rotate(-6deg);
-    opacity: 0;
-  }
+  0% { transform: translate(-12vw,0) rotate(-6deg); opacity: 0; }
+  12% { opacity: var(--peak,.6); }
+  50% { transform: translate(70vw,-7vh) rotate(6deg); opacity: var(--peak,.6); }
+  88% { opacity: .08; }
+  100% { transform: translate(115vw,4vh) rotate(-6deg); opacity: 0; }
 }
 
+/* ENCABEZADO */
 header {
   position: relative;
   z-index: 1;
@@ -214,6 +184,7 @@ h1 {
   background: #FFC36E;
 }
 
+/* GRILLA DE JUEGOS */
 main {
   position: relative;
   z-index: 1;
@@ -231,89 +202,56 @@ main {
 
 .games {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(235px,1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
 }
 
 .game-card {
-  background: #FFF8EE;
-  color: #29213A;
-  border: 3px solid #FF9B35;
-  border-radius: 22px;
-  padding: 23px 18px 20px;
-  text-align: center;
-  box-shadow: 7px 7px 0 #6F2DA8;
-  transition: transform .18s,box-shadow .18s;
-  display: flex;
-  flex-direction: column;
-  min-height: 330px;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+  transition: transform .18s;
 }
 
 .game-card:hover {
-  transform: translate(-3px,-3px);
-  box-shadow: 10px 10px 0 #FF9B35;
+  transform: translateY(-4px);
 }
 
-.game-icon {
-  font-size: 50px;
-  line-height: 1;
-  margin-bottom: 14px;
-}
-
-.game-card h2 {
-  font-size: 22px;
-  margin-bottom: 8px;
-  min-height: 31px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.game-card p {
-  font-size: 16px;
-  line-height: 1.4;
-  min-height: 67px;
-  margin-bottom: 18px;
-}
-
-.play-button {
-  display: inline-block;
-  width: 100%;
-  padding: 13px 16px;
-  margin-top: auto;
-  border: 3px solid var(--carbon);
-  border-radius: 13px;
-  background: #7B35A8;
-  color: var(--hueso);
-  font-size: 17px;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 4px 4px 0 var(--carbon);
-}
-
-.play-button:hover {
-  background: #FF9B35;
-  color: var(--carbon);
-}
-
-.help-link {
+.game-image-link {
   display: block;
-  margin: 0 auto 28px;
-  color: #FFB75B;
-  font-size: 18px;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  cursor: pointer;
-  background: none;
-  border: 0;
-  font-family: "Chakra Petch";
+  line-height: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  outline-offset: 4px;
 }
 
-.help-link:hover {
-  color: #F3A9FF;
+.game-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.5 / 1;
+  object-fit: cover;
+  border-radius: 18px;
+  filter: drop-shadow(0 5px 0 rgba(255,155,53,.65));
+  transition: transform .18s ease, filter .18s ease;
 }
 
+.game-image-link:hover img {
+  transform: scale(1.025);
+  filter: drop-shadow(0 7px 0 rgba(255,155,53,.9));
+}
+
+/* Ocultamos los títulos porque el nombre ya está en cada tarjeta */
+.game-card h2,
+.game-card p,
+.game-card .game-icon,
+.game-card .play-button {
+  display: none;
+}
+
+/* PIE */
 footer {
   position: relative;
   z-index: 1;
@@ -332,6 +270,24 @@ footer {
 
 .store-link:hover {
   text-decoration: underline;
+}
+
+.help-link {
+  display: block;
+  margin: 0 auto 28px;
+  color: #FFB75B;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  font-family: "Chakra Petch";
+}
+
+.help-link:hover {
+  color: #F3A9FF;
 }
 
 /* VENTANA DE CUPONES */
@@ -417,7 +373,8 @@ footer {
   cursor: pointer;
 }
 
-@media(max-width:600px) {
+/* CELULAR: UNA TARJETA POR FILA */
+@media (max-width: 600px) {
   header {
     padding: 32px 18px 38px;
   }
@@ -436,15 +393,18 @@ footer {
 
   main {
     margin: 35px auto;
+    width: min(460px, 90%);
   }
 
   .games {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
   }
 
-  .game-card {
-    padding: 23px 18px 20px;
-    min-height: 315px;
+  .game-card img {
+    width: 100%;
+    aspect-ratio: 1.5 / 1;
+    object-fit: cover;
   }
 
   .modal {
@@ -452,7 +412,7 @@ footer {
   }
 }
 
-@media(prefers-reduced-motion:reduce) {
+@media (prefers-reduced-motion: reduce) {
   .ghost-layer {
     display: none;
   }
@@ -547,70 +507,59 @@ footer {
   <div class="section-title">🎃 ELEGÍ TU JUEGO 👻</div>
 
   <section class="games">
-
     <article class="game-card">
-      <div class="game-icon">🕹️</div>
-      <h2>Misión Mostrador</h2>
-      <p>Sobreviví al caos del mostrador.</p>
-      <a class="play-button" href="mision-mostrador/">JUGAR</a>
+      <a class="game-image-link" href="mision-mostrador/" aria-label="Jugar Misión Mostrador">
+        <img src="tarjetas/kiro-juego-01.png" alt="Misión Mostrador — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🏎️</div>
-      <h2>Kiro Cross</h2>
-      <p>Cruzá la calle, esquivá los autos y superá tu récord.</p>
-      <a class="play-button" href="Kiro-Cross/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Cross/" aria-label="Jugar Kiro Cross">
+        <img src="tarjetas/kiro-juego-02.png" alt="Kiro Cross — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">💣</div>
-      <h2>Kiro Buscaminas</h2>
-      <p>Encontrá todas las casillas seguras y evitá las minas.</p>
-      <a class="play-button" href="Kiro-Buscaminas/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Buscaminas/" aria-label="Jugar Kiro Buscaminas">
+        <img src="tarjetas/kiro-juego-03.png" alt="Kiro Buscaminas — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🐍</div>
-      <h2>Kiro Viborita</h2>
-      <p>Comé, crecé y no choques contra las paredes.</p>
-      <a class="play-button" href="Kiro-Viborita/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Viborita/" aria-label="Jugar Kiro Viborita">
+        <img src="tarjetas/kiro-juego-04.png" alt="Kiro Viborita — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">💥</div>
-      <h2>Kiro Whack</h2>
-      <p>¡Tocá los Kiros antes de que desaparezcan!</p>
-      <a class="play-button" href="Kiro-Whack/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Whack/" aria-label="Jugar Kiro Whack">
+        <img src="tarjetas/kiro-juego-05.png" alt="Kiro Whack — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🧱</div>
-      <h2>Kiro Stack</h2>
-      <p>Apilá libros con precisión y construí la torre más alta.</p>
-      <a class="play-button" href="Kiro-Stack/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Stack/" aria-label="Jugar Kiro Stack">
+        <img src="tarjetas/kiro-juego-06.png" alt="Kiro Stack — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🪽</div>
-      <h2>Kiro Flappy</h2>
-      <p>Volá entre los obstáculos sin chocar.</p>
-      <a class="play-button" href="Kiro-Flappy/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Flappy/" aria-label="Jugar Kiro Flappy">
+        <img src="tarjetas/kiro-juego-07.png" alt="Kiro Flappy — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🦖</div>
-      <h2>Kiro Dino</h2>
-      <p>Corré, saltá y esquivá. ¿Hasta dónde llegás?</p>
-      <a class="play-button" href="KiroDino/">JUGAR</a>
+      <a class="game-image-link" href="KiroDino/" aria-label="Jugar Kiro Dino">
+        <img src="tarjetas/kiro-juego-08.png" alt="Kiro Dino — Jugar" loading="lazy">
+      </a>
     </article>
 
     <article class="game-card">
-      <div class="game-icon">🏓</div>
-      <h2>Kiro Pong</h2>
-      <p>Devolvé la pelota y ganale al rival.</p>
-      <a class="play-button" href="Kiro-Pong/">JUGAR</a>
+      <a class="game-image-link" href="Kiro-Pong/" aria-label="Jugar Kiro Pong">
+        <img src="tarjetas/kiro-juego-09.png" alt="Kiro Pong — Jugar" loading="lazy">
+      </a>
     </article>
-
   </section>
 </main>
 
@@ -624,34 +573,13 @@ footer {
     <button class="close-modal" id="closeHelp" aria-label="Cerrar">×</button>
     <h2 id="modalTitle">🎟️ ¿CÓMO USO MI CUPÓN?</h2>
 
-    <div class="modal-step">
-      <span class="step-number">1</span>
-      <span>Elegí los productos que quieras comprar en la tienda Kiro.</span>
-    </div>
+    <div class="modal-step"><span class="step-number">1</span><span>Elegí los productos que quieras comprar en la tienda Kiro.</span></div>
+    <div class="modal-step"><span class="step-number">2</span><span>Agregalos al carrito y comenzá el proceso de compra.</span></div>
+    <div class="modal-step"><span class="step-number">3</span><span>En el checkout, buscá el campo <strong>“Código de descuento”</strong>.</span></div>
+    <div class="modal-step"><span class="step-number">4</span><span>Ingresá el código que desbloqueaste jugando en Kiro Play.</span></div>
+    <div class="modal-step"><span class="step-number">5</span><span>Tocá <strong>Aplicar</strong> y verificá que el descuento se haya aplicado.</span></div>
 
-    <div class="modal-step">
-      <span class="step-number">2</span>
-      <span>Agregalos al carrito y comenzá el proceso de compra.</span>
-    </div>
-
-    <div class="modal-step">
-      <span class="step-number">3</span>
-      <span>En el checkout, buscá el campo <strong>“Código de descuento”</strong>.</span>
-    </div>
-
-    <div class="modal-step">
-      <span class="step-number">4</span>
-      <span>Ingresá el código que desbloqueaste jugando en Kiro Play.</span>
-    </div>
-
-    <div class="modal-step">
-      <span class="step-number">5</span>
-      <span>Tocá <strong>Aplicar</strong> y verificá que el descuento se haya aplicado.</span>
-    </div>
-
-    <div class="modal-note">
-      💗 ¡Listo! Ahora podés terminar tu compra usando el descuento que ganaste jugando.
-    </div>
+    <div class="modal-note">💗 ¡Listo! Ahora podés terminar tu compra usando el descuento que ganaste jugando.</div>
   </div>
 </div>
 
@@ -660,7 +588,7 @@ const modal = document.getElementById("helpModal");
 const openHelp = document.getElementById("openHelp");
 const closeHelp = document.getElementById("closeHelp");
 
-// Los cuatro audios deben estar dentro de "audios-halloween".
+// Audios: conservar la carpeta audios-halloween junto al index.html.
 const halloweenAudio = {
   laugh: new Audio("audios-halloween/dragon-studio-witch-laugh-401713.mp3"),
   ghost: new Audio("audios-halloween/fadingembersaudio-spooky-cartoon-ghost-wooo-430234.mp3"),
@@ -693,14 +621,10 @@ function playSpookySound(name) {
   try {
     audio.currentTime = 0;
     const result = audio.play();
-    if (result && typeof result.catch === "function") {
-      result.catch(() => {});
-    }
+    if (result && typeof result.catch === "function") result.catch(() => {});
   } catch (_) {}
 }
 
-// Intentar reproducir la carcajada al entrar.
-// Si el navegador la bloquea, se intentará en la primera interacción.
 function tryWitchLaugh() {
   if (laughPlayed) return;
 
@@ -726,7 +650,6 @@ function unlockAndPlayLaugh() {
     laughPlayed = true;
     laughJustTriggered = true;
     playSpookySound("laugh");
-
     window.setTimeout(() => {
       laughJustTriggered = false;
     }, 1800);
@@ -736,7 +659,6 @@ function unlockAndPlayLaugh() {
 window.addEventListener("load", () => {
   tryWitchLaugh();
 
-  // Un aullido sorpresa, como máximo una vez, después de la interacción.
   window.setTimeout(() => {
     if (audioUnlocked && !howlPlayed && !document.hidden) {
       howlPlayed = true;
@@ -754,32 +676,23 @@ window.addEventListener("load", () => {
 
 openHelp.addEventListener("click", () => {
   modal.classList.add("open");
-
-  if (audioUnlocked && !laughJustTriggered) {
-    playSpookySound("ghost");
-  }
+  if (audioUnlocked && !laughJustTriggered) playSpookySound("ghost");
 });
 
 closeHelp.addEventListener("click", () => {
   modal.classList.remove("open");
-
-  if (audioUnlocked) {
-    playSpookySound("door");
-  }
+  if (audioUnlocked) playSpookySound("door");
 });
 
-modal.addEventListener("click", e => {
-  if (e.target === modal) {
+modal.addEventListener("click", event => {
+  if (event.target === modal) {
     modal.classList.remove("open");
-
-    if (audioUnlocked) {
-      playSpookySound("door");
-    }
+    if (audioUnlocked) playSpookySound("door");
   }
 });
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
     modal.classList.remove("open");
   }
 });
