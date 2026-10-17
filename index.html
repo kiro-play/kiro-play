@@ -660,17 +660,121 @@ const modal = document.getElementById("helpModal");
 const openHelp = document.getElementById("openHelp");
 const closeHelp = document.getElementById("closeHelp");
 
+// Los cuatro audios deben estar dentro de "audios-halloween".
+const halloweenAudio = {
+  laugh: new Audio("audios-halloween/dragon-studio-witch-laugh-401713.mp3"),
+  ghost: new Audio("audios-halloween/fadingembersaudio-spooky-cartoon-ghost-wooo-430234.mp3"),
+  door: new Audio("audios-halloween/dragon-studio-creaky-old-door-472357.mp3"),
+  howl: new Audio("audios-halloween/dragon-studio-wolf-howl-2-359870.mp3")
+};
+
+Object.values(halloweenAudio).forEach(audio => {
+  audio.preload = "auto";
+  audio.volume = 0.75;
+});
+
+halloweenAudio.howl.volume = 0.55;
+halloweenAudio.ghost.volume = 0.65;
+
+let laughPlayed = false;
+let audioUnlocked = false;
+let howlPlayed = false;
+let laughJustTriggered = false;
+
+function playSpookySound(name) {
+  const audio = halloweenAudio[name];
+  if (!audio) return;
+
+  const anotherSoundIsPlaying = Object.entries(halloweenAudio)
+    .some(([key, other]) => key !== name && !other.paused && !other.ended);
+
+  if (anotherSoundIsPlaying) return;
+
+  try {
+    audio.currentTime = 0;
+    const result = audio.play();
+    if (result && typeof result.catch === "function") {
+      result.catch(() => {});
+    }
+  } catch (_) {}
+}
+
+// Intentar reproducir la carcajada al entrar.
+// Si el navegador la bloquea, se intentará en la primera interacción.
+function tryWitchLaugh() {
+  if (laughPlayed) return;
+
+  const audio = halloweenAudio.laugh;
+
+  try {
+    audio.currentTime = 0;
+    const result = audio.play();
+
+    if (result && typeof result.then === "function") {
+      result.then(() => {
+        laughPlayed = true;
+        audioUnlocked = true;
+      }).catch(() => {});
+    }
+  } catch (_) {}
+}
+
+function unlockAndPlayLaugh() {
+  audioUnlocked = true;
+
+  if (!laughPlayed) {
+    laughPlayed = true;
+    laughJustTriggered = true;
+    playSpookySound("laugh");
+
+    window.setTimeout(() => {
+      laughJustTriggered = false;
+    }, 1800);
+  }
+}
+
+window.addEventListener("load", () => {
+  tryWitchLaugh();
+
+  // Un aullido sorpresa, como máximo una vez, después de la interacción.
+  window.setTimeout(() => {
+    if (audioUnlocked && !howlPlayed && !document.hidden) {
+      howlPlayed = true;
+      playSpookySound("howl");
+    }
+  }, 35000);
+});
+
+["pointerdown", "keydown", "touchstart"].forEach(eventName => {
+  document.addEventListener(eventName, unlockAndPlayLaugh, {
+    once: true,
+    passive: true
+  });
+});
+
 openHelp.addEventListener("click", () => {
   modal.classList.add("open");
+
+  if (audioUnlocked && !laughJustTriggered) {
+    playSpookySound("ghost");
+  }
 });
 
 closeHelp.addEventListener("click", () => {
   modal.classList.remove("open");
+
+  if (audioUnlocked) {
+    playSpookySound("door");
+  }
 });
 
 modal.addEventListener("click", e => {
   if (e.target === modal) {
     modal.classList.remove("open");
+
+    if (audioUnlocked) {
+      playSpookySound("door");
+    }
   }
 });
 
